@@ -1,3 +1,27 @@
+diff --git a/Makefile b/Makefile
+index a7b77299..ba1be064 100644
+--- a/Makefile
++++ b/Makefile
+@@ -839,18 +839,7 @@ legal-info-prepare: $(LEGAL_INFO_DIR)
+ 	@cp $(BR2_CONFIG) $(LEGAL_INFO_DIR)/buildroot.config
+ 
+ .PHONY: legal-info
+-legal-info: legal-info-clean legal-info-prepare $(foreach p,$(PACKAGES),$(p)-all-legal-info) \
+-		$(REDIST_SOURCES_DIR_TARGET) $(REDIST_SOURCES_DIR_HOST)
+-	@cat support/legal-info/README.header >>$(LEGAL_REPORT)
+-	@if [ -r $(LEGAL_WARNINGS) ]; then \
+-		cat support/legal-info/README.warnings-header \
+-			$(LEGAL_WARNINGS) >>$(LEGAL_REPORT); \
+-		cat $(LEGAL_WARNINGS); fi
+-	@rm -f $(LEGAL_WARNINGS)
+-	@(cd $(LEGAL_INFO_DIR); \
+-		find * -type f -exec sha256sum {} + | LC_ALL=C sort -k2 \
+-			>.legal-info.sha256; \
+-		mv .legal-info.sha256 legal-info.sha256)
++legal-info:
+ 	@echo "Legal info produced in $(LEGAL_INFO_DIR)"
+ 
+ .PHONY: show-targets
 diff --git a/board/pluto/busybox-1.25.0.config b/board/pluto/busybox-1.25.0.config
 index 88728cc9..78cf61c0 100644
 --- a/board/pluto/busybox-1.25.0.config
@@ -48,7 +72,7 @@ index a3b3f6f6..55601033 100644
 -https://wiki.analog.com/university/tools/pluto
 +https://github.com/plutoplus/plutoplus
 diff --git a/configs/zynq_pluto_defconfig b/configs/zynq_pluto_defconfig
-index 6203766e..15c7d35b 100644
+index 6203766e..beaca03a 100644
 --- a/configs/zynq_pluto_defconfig
 +++ b/configs/zynq_pluto_defconfig
 @@ -29,6 +29,7 @@ BR2_PACKAGE_MTD=y
@@ -101,7 +125,7 @@ index 6203766e..15c7d35b 100644
  BR2_PACKAGE_POLL_SYSFS=y
  BR2_PACKAGE_AD936X_REF_CAL=y
  BR2_TARGET_ROOTFS_CPIO=y
-@@ -62,3 +78,15 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
+@@ -62,3 +78,16 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
  BR2_PACKAGE_HOST_DOSFSTOOLS=y
  BR2_PACKAGE_HOST_GENIMAGE=y
  BR2_PACKAGE_HOST_MTOOLS=y
@@ -117,6 +141,7 @@ index 6203766e..15c7d35b 100644
 +BR2_PACKAGE_FFMPEG_DEMUXERS="aac h264 mpegts mpegvideo pcm_s16le rawvideo rtp hevc flv dvbsub"
 +BR2_PACKAGE_FFMPEG_PARSERS="aac h264 mjpeg mpegaudio mpegvideo hevc"
 +BR2_PACKAGE_STRACE=y
++BR2_CCACHE=y
 diff --git a/package/ad936x_ref_cal/ad936x_ref_cal.hash b/package/ad936x_ref_cal/ad936x_ref_cal.hash
 index 24eb7fb8..ca579877 100644
 --- a/package/ad936x_ref_cal/ad936x_ref_cal.hash
