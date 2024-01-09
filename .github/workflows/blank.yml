@@ -43,6 +43,7 @@ jobs:
         with:
           path: |
             plutosdr-fw/buildroot/dl/
+            /home/runner/.buildroot-ccache
           key: ${{ runner.os }}
 
       # Runs a set of commands using the runners shell
@@ -65,4 +66,5 @@ jobs:
         with:
           path: |
             plutosdr-fw/buildroot/dl/
+            /home/runner/.buildroot-ccache
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}
