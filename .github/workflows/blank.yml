@@ -44,6 +44,7 @@ jobs:
           path: |
             plutosdr-fw/buildroot/dl/
             /home/runner/.buildroot-ccache
+            .ccache
           key: ${{ runner.os }}
 
       # Runs a set of commands using the runners shell
@@ -57,6 +58,8 @@ jobs:
           sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
           sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev 
           ./scripts/apply.sh
+          export BR2_USE_CCACHE=1
+          export BR2_CCACHE_DIR=$(pwd)/.ccache
           cd plutosdr-fw
           make
           
@@ -67,4 +70,10 @@ jobs:
           path: |
             plutosdr-fw/buildroot/dl/
             /home/runner/.buildroot-ccache
+            .ccache
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}
+          
+      - uses: actions/upload-artifact@v3
+        with:
+          name: image
+          path: plutosdr-fw/build
