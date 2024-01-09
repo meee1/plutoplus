@@ -1,5 +1,5 @@
 diff --git a/board/pluto/busybox-1.25.0.config b/board/pluto/busybox-1.25.0.config
-index 88728cc9f2..78815511b9 100644
+index 88728cc9..78cf61c0 100644
 --- a/board/pluto/busybox-1.25.0.config
 +++ b/board/pluto/busybox-1.25.0.config
 @@ -880,10 +880,10 @@ CONFIG_FEATURE_IP_NEIGH=y
@@ -17,8 +17,17 @@ index 88728cc9f2..78815511b9 100644
  CONFIG_NETSTAT=y
  # CONFIG_FEATURE_NETSTAT_WIDE is not set
  # CONFIG_FEATURE_NETSTAT_PRG is not set
+@@ -923,7 +923,7 @@ CONFIG_TRACEROUTE=y
+ # CONFIG_TRACEROUTE6 is not set
+ # CONFIG_FEATURE_TRACEROUTE_VERBOSE is not set
+ # CONFIG_FEATURE_TRACEROUTE_USE_ICMP is not set
+-# CONFIG_TUNCTL is not set
++CONFIG_TUNCTL=y
+ # CONFIG_FEATURE_TUNCTL_UG is not set
+ CONFIG_VCONFIG=y
+ CONFIG_WGET=y
 diff --git a/board/pluto/motd b/board/pluto/motd
-index a3b3f6f664..55601033c6 100644
+index a3b3f6f6..55601033 100644
 --- a/board/pluto/motd
 +++ b/board/pluto/motd
 @@ -1,10 +1,9 @@
@@ -39,7 +48,7 @@ index a3b3f6f664..55601033c6 100644
 -https://wiki.analog.com/university/tools/pluto
 +https://github.com/plutoplus/plutoplus
 diff --git a/configs/zynq_pluto_defconfig b/configs/zynq_pluto_defconfig
-index 6203766e04..884adfcd30 100644
+index 6203766e..15c7d35b 100644
 --- a/configs/zynq_pluto_defconfig
 +++ b/configs/zynq_pluto_defconfig
 @@ -29,6 +29,7 @@ BR2_PACKAGE_MTD=y
@@ -107,9 +116,9 @@ index 6203766e04..884adfcd30 100644
 +BR2_PACKAGE_FFMPEG_MUXERS="adts flv mpegts rawvideo image2"
 +BR2_PACKAGE_FFMPEG_DEMUXERS="aac h264 mpegts mpegvideo pcm_s16le rawvideo rtp hevc flv dvbsub"
 +BR2_PACKAGE_FFMPEG_PARSERS="aac h264 mjpeg mpegaudio mpegvideo hevc"
-+#BR2_PACKAGE_STRACE=y
++BR2_PACKAGE_STRACE=y
 diff --git a/package/ad936x_ref_cal/ad936x_ref_cal.hash b/package/ad936x_ref_cal/ad936x_ref_cal.hash
-index 24eb7fb88b..ca5798774c 100644
+index 24eb7fb8..ca579877 100644
 --- a/package/ad936x_ref_cal/ad936x_ref_cal.hash
 +++ b/package/ad936x_ref_cal/ad936x_ref_cal.hash
 @@ -1,5 +1,5 @@
@@ -119,8 +128,22 @@ index 24eb7fb88b..ca5798774c 100644
  
  # License files (locally computed as well)
  sha256 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643 LICENSE
+diff --git a/package/fftw/fftw.mk b/package/fftw/fftw.mk
+index 1bb537ae..7cf3ac46 100644
+--- a/package/fftw/fftw.mk
++++ b/package/fftw/fftw.mk
+@@ -24,6 +24,9 @@ ifeq ($(BR2_PACKAGE_FFTW_FAST),y)
+ FFTW_COMMON_CFLAGS += -O3 -ffast-math
+ endif
+ 
++# ARM optimisations
++FFTW_CONF_OPTS += $(if $(BR2_PACKAGE_FFTW_USE_NEON),--enable,--disable)-neon
++FFTW_CFLAGS += $(if $(BR2_PACKAGE_FFTW_USE_NEON),-mfpu=neon)
+ # Generic optimisations
+ ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+ FFTW_COMMON_CONF_OPTS += --enable-threads
 diff --git a/package/libiio/libiio.hash b/package/libiio/libiio.hash
-index f1c58efb5e..cb6378f77b 100644
+index f1c58efb..cb6378f7 100644
 --- a/package/libiio/libiio.hash
 +++ b/package/libiio/libiio.hash
 @@ -1,6 +1,5 @@

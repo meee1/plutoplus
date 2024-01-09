@@ -1,3 +1,33 @@
+diff --git a/.gitmodules b/.gitmodules
+index 0617b65..e515a8f 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -2,14 +2,25 @@
+ 	path = u-boot-xlnx
+ 	url = https://github.com/analogdevicesinc/u-boot-xlnx.git
+ 	branch = pluto
++    shallow = true
++
+ [submodule "buildroot"]
+ 	path = buildroot
+ 	url = https://github.com/analogdevicesinc/buildroot.git
++    shallow = true
++
+ [submodule "linux"]
+ 	path = linux
+ 	url = https://github.com/analogdevicesinc/linux
+ 	branch = 2018_R1
++
++    shallow = true
++
+ [submodule "hdl"]
+ 	path = hdl
+ 	url = https://github.com/analogdevicesinc/hdl
+ 	branch = hdl_2018_r1
++    shallow = true
++
++
++
 diff --git a/scripts/pluto.its b/scripts/pluto.its
 index e69e417..aa7fa08 100644
 --- a/scripts/pluto.its
