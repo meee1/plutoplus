@@ -51,3 +51,10 @@ jobs:
           cd plutosdr-fw
           make
           
+      - name: Cache zips
+        uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: |
+            plutosdr-fw/buildroot/dl/
+          key: ${{ runner.os }}
