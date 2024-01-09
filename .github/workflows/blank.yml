@@ -46,7 +46,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
           sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
-          sudo apt-get install -y bc python cpio zip unzip rsync file wget
+          sudo apt-get install -y bc python cpio zip unzip rsync file wget libmpc-dev 
           ./scripts/apply.sh
           cd plutosdr-fw
           make
