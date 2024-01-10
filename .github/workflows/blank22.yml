@@ -37,11 +37,11 @@ jobs:
           ls -al              
           export PATH=/usr/local/bin:`pwd`/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf/bin:$PATH   
           
-          cd plutosdr-fw
-          cd buildroot
+          cd plutosdr-fw          
           export CROSS_COMPILE="arm-linux-gnueabihf-"
           which ${CROSS_COMPILE}gcc
-          make batctl-build
+          make -C buildroot ARCH=arm zynq_pluto_defconfig
+          make -C buildroot batctl
           cd ..
           cd ..     
           mkdir third_party
