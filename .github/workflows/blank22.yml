@@ -41,7 +41,7 @@ jobs:
           cd buildroot
           export CROSS_COMPILE="arm-linux-gnueabihf-"
           which ${CROSS_COMPILE}gcc
-          make batctl
+          make batctl-build
           cd ..
           cd ..     
           mkdir third_party
