@@ -51,7 +51,7 @@ jobs:
       - name: Run a multi-line script
         env:
           SKIP_LEGAL: 1
-          XSA_URL: "http://127.0.0.1/"
+          XSA_URL: "https://github.com/DeonMarais64/PlutoPlusSDR-FW/releases/download/v0.37%2B_datv_packages/system_top.xsa"
         run: |
           set -o xtrace
           sudo apt-get update
