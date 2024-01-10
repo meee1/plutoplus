@@ -64,14 +64,19 @@ jobs:
           cd plutosdr-fw
           touch buildroot/board/pluto/msd/LICENSE.html
           
-          make
+          make -C buildroot ARCH=arm zynq_pluto_defconfig
+          make -C buildroot toolchain
 
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
           
           cd ..
           git clone https://github.com/meee1/charon.git --depth=1
+          cd charon
+          git submodule update --init third_party/libtuntap/
+          cd ..
           cp -r charon/* ./ | true
+          
           make
 
           cp charon plutosdr-fw/buildroot/output/target/usr/bin
