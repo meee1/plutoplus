@@ -65,7 +65,7 @@ jobs:
           touch buildroot/board/pluto/msd/LICENSE.html
           
           make -C buildroot ARCH=arm zynq_pluto_defconfig
-          make -C buildroot batctl
+          make -C buildroot
 
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
