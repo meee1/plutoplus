@@ -1,27 +1,3 @@
-diff --git a/Makefile b/Makefile
-index a7b77299..ba1be064 100644
---- a/Makefile
-+++ b/Makefile
-@@ -839,18 +839,7 @@ legal-info-prepare: $(LEGAL_INFO_DIR)
- 	@cp $(BR2_CONFIG) $(LEGAL_INFO_DIR)/buildroot.config
- 
- .PHONY: legal-info
--legal-info: legal-info-clean legal-info-prepare $(foreach p,$(PACKAGES),$(p)-all-legal-info) \
--		$(REDIST_SOURCES_DIR_TARGET) $(REDIST_SOURCES_DIR_HOST)
--	@cat support/legal-info/README.header >>$(LEGAL_REPORT)
--	@if [ -r $(LEGAL_WARNINGS) ]; then \
--		cat support/legal-info/README.warnings-header \
--			$(LEGAL_WARNINGS) >>$(LEGAL_REPORT); \
--		cat $(LEGAL_WARNINGS); fi
--	@rm -f $(LEGAL_WARNINGS)
--	@(cd $(LEGAL_INFO_DIR); \
--		find * -type f -exec sha256sum {} + | LC_ALL=C sort -k2 \
--			>.legal-info.sha256; \
--		mv .legal-info.sha256 legal-info.sha256)
-+legal-info:
- 	@echo "Legal info produced in $(LEGAL_INFO_DIR)"
- 
- .PHONY: show-targets
 diff --git a/board/pluto/busybox-1.25.0.config b/board/pluto/busybox-1.25.0.config
 index 88728cc9..78cf61c0 100644
 --- a/board/pluto/busybox-1.25.0.config
