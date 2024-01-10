@@ -51,6 +51,7 @@ jobs:
       - name: Run a multi-line script
         env:
           SKIP_LEGAL: 1
+          XSA_URL: "http://127.0.0.1/"
         run: |
           set -o xtrace
           sudo apt-get update
