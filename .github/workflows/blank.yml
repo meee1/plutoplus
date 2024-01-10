@@ -62,6 +62,23 @@ jobs:
           export BR2_CCACHE_DIR=$(pwd)/.ccache
           cd plutosdr-fw
           touch buildroot/board/pluto/msd/LICENSE.html
+          
+          make -C buildroot ARCH=arm zynq_pluto_defconfig
+          make -C buildroot batctl
+          cd ..
+          export PATH=`pwd`/plutosdr-fw/buildroot/output/host/bin:`pwd`/plutosdr-fw/buildroot/output/host/sbin:${PATH}
+          export CROSS_COMPILE="arm-linux-gnueabihf-"
+          mkdir third_party
+          cd third_party
+          git clone https://github.com/tvelliott/libfec.git
+          cd libfec          
+          rm libfec.so
+          make
+          cp *.so ../../plutosdr-fw/buildroot/output/target/usr/lib
+          cd ..
+          cd ..
+
+          cd plutosdr-fw
           make
           
       - name: Save cache zips
