@@ -61,6 +61,7 @@ jobs:
           export BR2_USE_CCACHE=1
           export BR2_CCACHE_DIR=$(pwd)/.ccache
           cd plutosdr-fw
+          touch buildroot/board/pluto/msd/LICENSE.html
           make
           
       - name: Save cache zips
