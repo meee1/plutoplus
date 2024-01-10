@@ -31,19 +31,13 @@ jobs:
       - name: Run a multi-line script
         run: |
           set -x -e
-          
-          wget -N --quiet "https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/arm-linux-gnueabihf/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf.tar.xz"          
-          tar -xf gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf.tar.xz          
-          ls -al              
-          export PATH=/usr/local/bin:`pwd`/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf/bin:$PATH   
-          
           cd plutosdr-fw          
-          export CROSS_COMPILE="arm-linux-gnueabihf-"
-          which ${CROSS_COMPILE}gcc
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot batctl
           cd ..
           cd ..     
+          export CROSS_COMPILE="arm-linux-gnueabihf-"
+          which ${CROSS_COMPILE}gcc
           mkdir third_party
           cd third_party
           git clone https://github.com/tvelliott/libfec.git
