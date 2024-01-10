@@ -34,8 +34,8 @@ jobs:
           cd plutosdr-fw          
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot batctl
-          cd ..
-          cd ..     
+          cd ..   
+          export PATH=`pwd`/plutosdr-fw/buildroot/output/host/bin:`pwd`/plutosdr-fw/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
           which ${CROSS_COMPILE}gcc
           mkdir third_party
