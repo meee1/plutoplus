@@ -66,7 +66,8 @@ jobs:
           
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot toolchain
-
+          make
+          
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
           
@@ -80,6 +81,9 @@ jobs:
           make
 
           cp charon plutosdr-fw/buildroot/output/target/usr/bin
+
+          cd plutosdr-fw
+          make pluto.frm
           
       - name: Save cache zips
         uses: actions/cache/save@v3
