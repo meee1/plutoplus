@@ -191,6 +191,7 @@ jobs:
           git submodule update --init third_party/libtuntap/
           git submodule update --init third_party/libfec/
           make -C third_party/libfec/
+          cp third_party/libfec/*.so ../plutosdr-fw/buildroot/output/target/usr/lib
           cd third_party
           cd libtuntap
           sed -i 's\/usr/include/\\g' CMakeLists.txt
