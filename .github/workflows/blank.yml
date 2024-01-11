@@ -187,6 +187,18 @@ jobs:
           git clone https://github.com/meee1/charon.git --depth=1
           cd charon
           git submodule update --init third_party/libtuntap/
+          git submodule update --init third_party/libfec/
+          make -C third_party/libfec/
+          cd third_party
+          cd libtuntap
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++
+          cp lib/libtuntap.a ../
+          cd ..
+          cd ..
+          cd ..
+                   
           cd ..
           cp -r charon/* ./ | true
           rm -rf charon
