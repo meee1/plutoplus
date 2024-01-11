@@ -178,6 +178,7 @@ jobs:
           make -C buildroot libiio
           make -C buildroot liquid-dsp
           make -C linux ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zynq_pluto_defconfig
+          make -C linux ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage UIMAGE_LOADADDR=0x8000
           
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
