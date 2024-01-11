@@ -191,6 +191,8 @@ jobs:
           make -C third_party/libfec/
           cd third_party
           cd libtuntap
+          sed -i 's\/usr/include/\\g' CMakeLists.txt
+          sed -i 's\/usr/local/include\\g' CMakeLists.txt
           mkdir build
           cd build
           cmake .. -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++
