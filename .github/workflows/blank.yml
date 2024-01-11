@@ -45,20 +45,6 @@ jobs:
             plutosdr-fw/buildroot/dl/
           key: ${{ runner.os }}-dl
 
-      - name: Cache brccache
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            /home/runner/.buildroot-ccache
-          key: ${{ runner.os }}-brccache
-
-      - name: Cache ccache
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            .ccache
-          key: ${{ runner.os }}-ccache
-
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         env:
@@ -85,22 +71,6 @@ jobs:
           path: |
             plutosdr-fw/buildroot/dl/
           key: ${{ runner.os }}-dl-${{ steps.get-date.outputs.date }}
-
-      - name: Cache brccache save
-        uses: actions/cache/save@v3
-        if: always()
-        with:
-          path: |
-            /home/runner/.buildroot-ccache
-          key: ${{ runner.os }}-brccache-${{ steps.get-date.outputs.date }}
-
-      - name: Cache ccache save
-        uses: actions/cache/save@v3
-        if: always()
-        with:
-          path: |
-            .ccache
-          key: ${{ runner.os }}-ccache-${{ steps.get-date.outputs.date }}
           
       - uses: actions/upload-artifact@v3
         with:
@@ -163,20 +133,6 @@ jobs:
           path: |
             plutosdr-fw/buildroot/dl/
           key: ${{ runner.os }}-dl
-
-      - name: Cache brccache
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            /home/runner/.buildroot-ccache
-          key: ${{ runner.os }}-brccache
-
-      - name: Cache ccache
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            .ccache
-          key: ${{ runner.os }}-ccache
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
