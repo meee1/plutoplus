@@ -51,7 +51,7 @@ jobs:
       - name: Run a multi-line script
         env:
           SKIP_LEGAL: 1
-          XSA_URL: "https://github.com/DeonMarais64/PlutoPlusSDR-FW/releases/download/v0.37%2B_datv_packages/system_top.xsa"
+          XSA_URL: "https://github.com/meee1/plutoplus/releases/download/v2/system_top.xsa"
         run: |
           set -o xtrace
           sudo apt-get update
@@ -160,7 +160,7 @@ jobs:
       - name: Run a multi-line script
         env:
           SKIP_LEGAL: 1
-          XSA_URL: "https://github.com/DeonMarais64/PlutoPlusSDR-FW/releases/download/v0.37%2B_datv_packages/system_top.xsa"
+          XSA_URL: "https://github.com/meee1/plutoplus/releases/download/v2/system_top.xsa"
         run: |
           set -o xtrace
           sudo apt-get update
@@ -216,10 +216,10 @@ jobs:
           cp charon plutosdr-fw/buildroot/output/target/usr/bin
 
           cd plutosdr-fw
-          make pluto.frm
+          make
           
       - uses: actions/upload-artifact@v3
         with:
-          name: image
+          name: image3
           path: plutosdr-fw/build
 
