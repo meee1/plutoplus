@@ -177,8 +177,7 @@ jobs:
           make -C buildroot toolchain
           make -C buildroot libiio
           make -C buildroot liquid-dsp
-          make -C linux ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zynq_pluto_defconfig
-          make -C linux ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage UIMAGE_LOADADDR=0x8000
+          make zImage
           
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
@@ -196,16 +195,6 @@ jobs:
 
           cd plutosdr-fw
           make pluto.frm
-          
-      - name: Save cache zips
-        uses: actions/cache/save@v3
-        if: always()
-        with:
-          path: |
-            plutosdr-fw/buildroot/dl/
-            /home/runner/.buildroot-ccache
-            .ccache
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}
           
       - uses: actions/upload-artifact@v3
         with:
