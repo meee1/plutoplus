@@ -203,6 +203,9 @@ jobs:
           cd ..
                    
           cd ..
+
+          find . | grep libfftw3
+          find . | grep libini
           cp -r charon/* ./ | true
           rm -rf charon
           make
