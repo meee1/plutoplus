@@ -177,7 +177,8 @@ jobs:
           make -C buildroot toolchain
           make -C buildroot libiio
           make -C buildroot liquid-dsp
-          make zImage
+          #make zImage
+          make -C buildroot libad9361-iio
           
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
