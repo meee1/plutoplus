@@ -66,7 +66,6 @@ jobs:
           
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot toolchain
-          make
           
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
@@ -77,7 +76,7 @@ jobs:
           git submodule update --init third_party/libtuntap/
           cd ..
           cp -r charon/* ./ | true
-          
+          rm -rf charon
           make
 
           cp charon plutosdr-fw/buildroot/output/target/usr/bin
