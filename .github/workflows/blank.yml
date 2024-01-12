@@ -179,7 +179,7 @@ jobs:
           cd build
           cmake .. -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++
           make
-          cp lib/*.so ../../../../plutosdr-fw/buildroot/output/target/usr/lib
+          cp lib/*.so* ../../../../plutosdr-fw/buildroot/output/target/usr/lib
           cd ..
           cd ..
           cd ..
