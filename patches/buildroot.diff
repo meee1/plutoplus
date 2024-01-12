@@ -126,17 +126,3 @@ index 6203766e..1943bab0 100644
 +BR2_PACKAGE_IPROUTE2=y
 +BR2_PACKAGE_LIQUID_DSP=y
 +BR2_PACKAGE_TUNCTL=y
-diff --git a/package/fftw/fftw.mk b/package/fftw/fftw.mk
-index 1bb537ae..7cf3ac46 100644
---- a/package/fftw/fftw.mk
-+++ b/package/fftw/fftw.mk
-@@ -24,6 +24,9 @@ ifeq ($(BR2_PACKAGE_FFTW_FAST),y)
- FFTW_COMMON_CFLAGS += -O3 -ffast-math
- endif
- 
-+# ARM optimisations
-+FFTW_CONF_OPTS += $(if $(BR2_PACKAGE_FFTW_USE_NEON),--enable,--disable)-neon
-+FFTW_CFLAGS += $(if $(BR2_PACKAGE_FFTW_USE_NEON),-mfpu=neon)
- # Generic optimisations
- ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
- FFTW_COMMON_CONF_OPTS += --enable-threads
