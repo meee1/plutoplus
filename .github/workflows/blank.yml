@@ -170,7 +170,7 @@ jobs:
           git submodule update --init third_party/libtuntap/
           git submodule update --init third_party/libfec/
           make -C third_party/libfec/
-          cp third_party/libfec/*.so ../plutosdr-fw/buildroot/output/target/usr/lib
+          #cp third_party/libfec/*.so ../plutosdr-fw/buildroot/output/target/usr/lib
           cd third_party
           cd libtuntap
           sed -i 's\/usr/include/\\g' CMakeLists.txt
@@ -179,7 +179,7 @@ jobs:
           cd build
           cmake .. -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++
           make
-          cp lib/*.so* ../../../../plutosdr-fw/buildroot/output/target/usr/lib
+          #cp lib/*.so* ../../../../plutosdr-fw/buildroot/output/target/usr/lib
           cd ..
           cd ..
           cd ..
