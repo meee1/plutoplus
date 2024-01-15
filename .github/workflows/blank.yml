@@ -134,18 +134,22 @@ jobs:
             plutosdr-fw/buildroot/dl/
           key: ${{ runner.os }}-dl
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: setup dependancys and apply patches
+        run: |
+            set -o xtrace
+            sudo apt-get update
+            sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
+            sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
+            sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev 
+            ./scripts/apply.sh
+
+
+      - name: setup toolchain and buildroot deps
         env:
           SKIP_LEGAL: 1
           XSA_URL: "https://github.com/meee1/plutoplus/releases/download/v2/system_top.xsa"
         run: |
           set -o xtrace
-          sudo apt-get update
-          sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
-          sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
-          sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev 
-          ./scripts/apply.sh
           export BR2_USE_CCACHE=1
           export BR2_CCACHE_DIR=$(pwd)/.ccache
           cd plutosdr-fw
@@ -155,22 +159,28 @@ jobs:
           make -C buildroot toolchain
           make -C buildroot libiio
           make -C buildroot liquid-dsp
-          #make zImage
           make -C buildroot libad9361-iio
           make -C buildroot ad936x_ref_cal
           make -C buildroot libini
           make -C buildroot zlib
-          
+
+      - name: build charon
+        env:
+          SKIP_LEGAL: 1
+          XSA_URL: "https://github.com/meee1/plutoplus/releases/download/v2/system_top.xsa"
+        run: |
+          set -o xtrace
+          export BR2_USE_CCACHE=1
+          export BR2_CCACHE_DIR=$(pwd)/.ccache
+
+          cd plutosdr-fw          
           export PATH=`pwd`/buildroot/output/host/bin:`pwd`/buildroot/output/host/sbin:${PATH}
           export CROSS_COMPILE="arm-linux-gnueabihf-"
           
           cd ..
           git clone https://github.com/meee1/charon.git --depth=1
           cd charon
-          git submodule update --init third_party/libtuntap/
-          git submodule update --init third_party/libfec/
           make -C third_party/libfec/
-          #cp third_party/libfec/*.so ../plutosdr-fw/buildroot/output/target/usr/lib
           cd third_party
           cd libtuntap
           sed -i 's\/usr/include/\\g' CMakeLists.txt
@@ -180,23 +190,28 @@ jobs:
           cmake .. -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++
           make
           cp lib/*.a ../
-          #cp lib/*.so* ../../../../plutosdr-fw/buildroot/output/target/usr/lib
           cd ..
           cd ..
           cd ..
                    
           cd ..
 
-          find . | grep libfftw3
-          find . | grep libini
           cp -r charon/* ./ | true
           rm -rf charon
           make
 
           cp charon plutosdr-fw/buildroot/output/target/usr/bin
 
-          cd plutosdr-fw
-          make
+      - name: build image
+        env:
+          SKIP_LEGAL: 1
+          XSA_URL: "https://github.com/meee1/plutoplus/releases/download/v2/system_top.xsa"
+        run: |
+            set -o xtrace
+            export BR2_USE_CCACHE=1
+            export BR2_CCACHE_DIR=$(pwd)/.ccache
+            cd plutosdr-fw
+            make
           
       - uses: actions/upload-artifact@v3
         with:
