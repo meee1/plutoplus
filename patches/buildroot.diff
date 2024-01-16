@@ -48,10 +48,18 @@ index a3b3f6f6..55601033 100644
 -https://wiki.analog.com/university/tools/pluto
 +https://github.com/plutoplus/plutoplus
 diff --git a/configs/zynq_pluto_defconfig b/configs/zynq_pluto_defconfig
-index 6203766e..1943bab0 100644
+index 6203766e..50f36150 100644
 --- a/configs/zynq_pluto_defconfig
 +++ b/configs/zynq_pluto_defconfig
-@@ -29,6 +29,7 @@ BR2_PACKAGE_MTD=y
+@@ -5,6 +5,7 @@ BR2_ARM_ENABLE_VFP=y
+ BR2_ARM_FPU_NEON=y
+ BR2_TOOLCHAIN_EXTERNAL=y
+ BR2_TOOLCHAIN_EXTERNAL_LINARO_ARM=y
++BR2_TOOLCHAIN_EXTERNAL_GDB_SERVER_COPY=y
+ BR2_OPTIMIZE_2=y
+ BR2_TARGET_GENERIC_HOSTNAME="pluto"
+ BR2_TARGET_GENERIC_ISSUE="Welcome to Pluto"
+@@ -29,6 +30,7 @@ BR2_PACKAGE_MTD=y
  # BR2_PACKAGE_MTD_UBIRSVOL is not set
  # BR2_PACKAGE_MTD_UBIUPDATEVOL is not set
  # BR2_PACKAGE_MTD_UBIBLOCK is not set
@@ -59,7 +67,7 @@ index 6203766e..1943bab0 100644
  BR2_PACKAGE_LINUX_FIRMWARE=y
  BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT61=y
  BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT73=y
-@@ -36,24 +37,40 @@ BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT2XX=y
+@@ -36,24 +38,40 @@ BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT2XX=y
  BR2_PACKAGE_LINUX_FIRMWARE_RTL_81XX=y
  BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX=y
  BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX=y
@@ -101,7 +109,7 @@ index 6203766e..1943bab0 100644
  BR2_PACKAGE_POLL_SYSFS=y
  BR2_PACKAGE_AD936X_REF_CAL=y
  BR2_TARGET_ROOTFS_CPIO=y
-@@ -62,3 +79,24 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
+@@ -62,3 +80,24 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
  BR2_PACKAGE_HOST_DOSFSTOOLS=y
  BR2_PACKAGE_HOST_GENIMAGE=y
  BR2_PACKAGE_HOST_MTOOLS=y
@@ -126,3 +134,24 @@ index 6203766e..1943bab0 100644
 +BR2_PACKAGE_IPROUTE2=y
 +BR2_PACKAGE_LIQUID_DSP=y
 +BR2_PACKAGE_TUNCTL=y
+diff --git a/package/liquid-dsp/liquid-dsp.mk b/package/liquid-dsp/liquid-dsp.mk
+index fcdf5725..dc32dfce 100644
+--- a/package/liquid-dsp/liquid-dsp.mk
++++ b/package/liquid-dsp/liquid-dsp.mk
+@@ -25,12 +25,14 @@ LIQUID_DSP_CFLAGS = $(TARGET_CFLAGS)
+ LIQUID_DSP_LDFLAGS = $(TARGET_LDFLAGS)
+ 
+ # Speed over accuracy trade off
+-ifeq ($(BR2_PACKAGE_LIQUID_DSP_FAST),y)
++#ifeq ($(BR2_PACKAGE_LIQUID_DSP_FAST),y)
++$(warning BR2_PACKAGE_LIQUID_DSP_FAST)
+ LIQUID_DSP_CFLAGS += -ffast-math
+-endif
++#endif
+ 
+ # use FFTW instead of built-in FFT
+ ifeq ($(BR2_PACKAGE_FFTW_SINGLE),y)
++$(warning BR2_PACKAGE_FFTW_SINGLE)
+ LIQUID_DSP_LDFLAGS += -lfftw3f
+ LIQUID_DSP_DEPENDENCIES += fftw-single
+ endif
