@@ -140,20 +140,51 @@ index 6203766e..792a9e98 100644
 +BR2_PACKAGE_LINUX_TOOLS_PERF=y
 +
 diff --git a/package/libfec/Config.in b/package/libfec/Config.in
-index 9dc092b8..8afd24a8 100644
---- a/package/libfec/Config.in
+new file mode 100644
+index 00000000..8afd24a8
+--- /dev/null
 +++ b/package/libfec/Config.in
-@@ -1,5 +1,5 @@
--config BR2_PACKAGE_libfec
--	bool "libfec"
--	select BR2_PACKAGE_libfec
--	help
--	  libfec
+@@ -0,0 +1,5 @@
 +config BR2_PACKAGE_libfec
 +	bool "libfec"
 +	select BR2_PACKAGE_libfec
 +	help
 +	  libfec
+diff --git a/package/libfec/libfec.hash b/package/libfec/libfec.hash
+new file mode 100644
+index 00000000..819ea388
+--- /dev/null
++++ b/package/libfec/libfec.hash
+@@ -0,0 +1 @@
++sha256	17484620f37614bd61e64189ed3a9908031ad0c18ba250756e8da8130c9cf068  libfec-0.2.tar.gz
+diff --git a/package/libfec/libfec.mk b/package/libfec/libfec.mk
+new file mode 100644
+index 00000000..2e74a31d
+--- /dev/null
++++ b/package/libfec/libfec.mk
+@@ -0,0 +1,22 @@
++################################################################################
++#
++# libfec
++#
++################################################################################
++LIBFEC_VERSION = 0.2
++LIBFEC_SITE = $(call github,tvelliott,libfec,master)
++
++LIBFEC_INSTALL_STAGING = YES
++
++define LIBFEC_BUILD_CMDS
++	$(TARGET_MAKE_ENV) CROSS_COMPILE=arm-linux-gnueabihf- $(MAKE1) -C $(@D)
++endef
++
++define LIBFEC_INSTALL_TARGET_CMDS
++	(cd $(@D); \
++    cp *.so $(TARGET_DIR)/usr/lib/ ; \
++    cp *.a $(TARGET_DIR)/usr/lib/ ; \
++    )
++endef
++
++$(eval $(generic-package))
 diff --git a/package/liquid-dsp/liquid-dsp.mk b/package/liquid-dsp/liquid-dsp.mk
 index fcdf5725..fbe3594a 100644
 --- a/package/liquid-dsp/liquid-dsp.mk
