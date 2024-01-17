@@ -48,7 +48,7 @@ index a3b3f6f6..55601033 100644
 -https://wiki.analog.com/university/tools/pluto
 +https://github.com/plutoplus/plutoplus
 diff --git a/configs/zynq_pluto_defconfig b/configs/zynq_pluto_defconfig
-index 6203766e..50f36150 100644
+index 6203766e..55944562 100644
 --- a/configs/zynq_pluto_defconfig
 +++ b/configs/zynq_pluto_defconfig
 @@ -5,6 +5,7 @@ BR2_ARM_ENABLE_VFP=y
@@ -109,7 +109,7 @@ index 6203766e..50f36150 100644
  BR2_PACKAGE_POLL_SYSFS=y
  BR2_PACKAGE_AD936X_REF_CAL=y
  BR2_TARGET_ROOTFS_CPIO=y
-@@ -62,3 +80,24 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
+@@ -62,3 +80,25 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
  BR2_PACKAGE_HOST_DOSFSTOOLS=y
  BR2_PACKAGE_HOST_GENIMAGE=y
  BR2_PACKAGE_HOST_MTOOLS=y
@@ -134,11 +134,12 @@ index 6203766e..50f36150 100644
 +BR2_PACKAGE_IPROUTE2=y
 +BR2_PACKAGE_LIQUID_DSP=y
 +BR2_PACKAGE_TUNCTL=y
++BR2_ENABLE_DEBUG=y
 diff --git a/package/liquid-dsp/liquid-dsp.mk b/package/liquid-dsp/liquid-dsp.mk
-index fcdf5725..dc32dfce 100644
+index fcdf5725..fbe3594a 100644
 --- a/package/liquid-dsp/liquid-dsp.mk
 +++ b/package/liquid-dsp/liquid-dsp.mk
-@@ -25,12 +25,14 @@ LIQUID_DSP_CFLAGS = $(TARGET_CFLAGS)
+@@ -25,20 +25,22 @@ LIQUID_DSP_CFLAGS = $(TARGET_CFLAGS)
  LIQUID_DSP_LDFLAGS = $(TARGET_LDFLAGS)
  
  # Speed over accuracy trade off
@@ -155,3 +156,13 @@ index fcdf5725..dc32dfce 100644
  LIQUID_DSP_LDFLAGS += -lfftw3f
  LIQUID_DSP_DEPENDENCIES += fftw-single
  endif
+ 
+ # disable altivec, it has build issues
+-ifeq ($(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpc64le),y)
++#ifeq ($(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpc64le),y)
+ LIQUID_DSP_CONF_OPTS += --enable-simdoverride
+-endif
++#endif
+ 
+ LIQUID_DSP_CONF_OPTS += \
+ 	CFLAGS="$(LIQUID_DSP_CFLAGS)" \
