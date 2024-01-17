@@ -159,10 +159,10 @@ index 00000000..819ea388
 +sha256	17484620f37614bd61e64189ed3a9908031ad0c18ba250756e8da8130c9cf068  libfec-0.2.tar.gz
 diff --git a/package/libfec/libfec.mk b/package/libfec/libfec.mk
 new file mode 100644
-index 00000000..2e74a31d
+index 00000000..a4300379
 --- /dev/null
 +++ b/package/libfec/libfec.mk
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,24 @@
 +################################################################################
 +#
 +# libfec
@@ -181,6 +181,8 @@ index 00000000..2e74a31d
 +	(cd $(@D); \
 +    cp *.so $(TARGET_DIR)/usr/lib/ ; \
 +    cp *.a $(TARGET_DIR)/usr/lib/ ; \
++    cp fec.h $(STAGING_DIR)/usr/include/ ; \
++    cp *.so $(STAGING_DIR)/usr/lib/ ; \
 +    )
 +endef
 +
