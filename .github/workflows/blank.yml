@@ -156,6 +156,7 @@ jobs:
           touch buildroot/board/pluto/msd/LICENSE.html
 
           echo "BR2_ENABLE_DEBUG=y" >> buildroot/configs/zynq_pluto_defconfig
+          echo "BR2_LINUX_KERNEL_TOOL_PERF=y" >> buildroot/configs/zynq_pluto_defconfig
                     
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot toolchain
