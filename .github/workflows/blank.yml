@@ -168,7 +168,6 @@ jobs:
           make -C buildroot zlib
           
           make -C buildroot valgrind
-          make -C buildroot mc
 
       - name: build charon
         env:
