@@ -139,6 +139,21 @@ index 6203766e..792a9e98 100644
 +BR2_PACKAGE_VALGRIND_CALLGRIND=y
 +BR2_PACKAGE_LINUX_TOOLS_PERF=y
 +
+diff --git a/package/libfec/Config.in b/package/libfec/Config.in
+index 9dc092b8..8afd24a8 100644
+--- a/package/libfec/Config.in
++++ b/package/libfec/Config.in
+@@ -1,5 +1,5 @@
+-config BR2_PACKAGE_libfec
+-	bool "libfec"
+-	select BR2_PACKAGE_libfec
+-	help
+-	  libfec
++config BR2_PACKAGE_libfec
++	bool "libfec"
++	select BR2_PACKAGE_libfec
++	help
++	  libfec
 diff --git a/package/liquid-dsp/liquid-dsp.mk b/package/liquid-dsp/liquid-dsp.mk
 index fcdf5725..fbe3594a 100644
 --- a/package/liquid-dsp/liquid-dsp.mk
