@@ -166,6 +166,8 @@ jobs:
           make -C buildroot ad936x_ref_cal
           make -C buildroot libini
           make -C buildroot zlib
+          
+          make -C buildroot valgrind
 
       - name: build charon
         env:
