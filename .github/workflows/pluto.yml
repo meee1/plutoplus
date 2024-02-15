@@ -54,11 +54,8 @@ jobs:
             sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev 
             cd plutosdr-fw
             git tag v0.38 || true
-            git apply ../patches/fw.diff
             cd linux
-            git apply ../../patches/linux.diff
-            cd ../u-boot-xlnx
-            git apply ../../patches/u-boot-xlnx.diff
+            git apply ../../patches/linuxpluto.diff
             cd ../buildroot
             git apply ../../patches/buildroot.diff
             cd ../..
@@ -73,9 +70,6 @@ jobs:
           export BR2_CCACHE_DIR=$(pwd)/.ccache
           cd plutosdr-fw
           touch buildroot/board/pluto/msd/LICENSE.html
-
-          echo "BR2_ENABLE_DEBUG=y" >> buildroot/configs/zynq_pluto_defconfig
-          echo "BR2_LINUX_KERNEL_TOOL_PERF=y" >> buildroot/configs/zynq_pluto_defconfig
                     
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot toolchain

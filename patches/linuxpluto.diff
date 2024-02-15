@@ -1,0 +1,26 @@
+diff --git a/arch/arm/configs/zynq_pluto_defconfig b/arch/arm/configs/zynq_pluto_defconfig
+index 506eec34f4b4..36aa5478084a 100644
+--- a/arch/arm/configs/zynq_pluto_defconfig
++++ b/arch/arm/configs/zynq_pluto_defconfig
+@@ -269,3 +269,21 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
+ CONFIG_DEBUG_LL=y
+ CONFIG_DEBUG_ZYNQ_UART1=y
+ CONFIG_EARLY_PRINTK=y
++
++CONFIG_OF_MDIO=y
++CONFIG_REALTEK_PHY=y
++CONFIG_ETHERNET=y
++CONFIG_NET_VENDOR_XILINX=y
++CONFIG_XILINX_AXI_EMAC=y
++CONFIG_MACB=y
++
++CONFIG_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PLTFM=y
++CONFIG_MMC_SDHCI_OF_ARASAN=y
++
++CONFIG_TUN=y
++CONFIG_TAP=y
++CONFIG_BRIDGE=y
++CONFIG_BATMAN_ADV=y
++CONFIG_WIREGUARD=y
