@@ -320,10 +320,10 @@ index 08c5a42204f3..0fe5bba8a082 100644
  	status = "okay";
  
 diff --git a/arch/arm/boot/dts/zynq-zc702.dts b/arch/arm/boot/dts/zynq-zc702.dts
-index aa084a9938d9..a72c1c2f1b35 100644
+index aa084a9938d9..cdc7b351330a 100644
 --- a/arch/arm/boot/dts/zynq-zc702.dts
 +++ b/arch/arm/boot/dts/zynq-zc702.dts
-@@ -57,7 +57,15 @@ led-ds23 {
+@@ -57,6 +57,14 @@ led-ds23 {
  			linux,default-trigger = "heartbeat";
  		};
  	};
@@ -334,11 +334,10 @@ index aa084a9938d9..a72c1c2f1b35 100644
 +		reg = <0xe0002000 0x1000>;
 +		view-port = <0x0170>;
 +		drv-vbus;
- };
 +};
+ };
  
  &can0 {
- 	status = "okay";
 @@ -441,6 +449,7 @@ &uart1 {
  &usb0 {
  	status = "okay";
@@ -348,10 +347,10 @@ index aa084a9938d9..a72c1c2f1b35 100644
  	pinctrl-0 = <&pinctrl_usb0_default>;
  };
 diff --git a/arch/arm/boot/dts/zynq-zc706.dts b/arch/arm/boot/dts/zynq-zc706.dts
-index 6a6e8312b3f7..ba01bbc67db5 100644
+index 6a6e8312b3f7..ef5b93570356 100644
 --- a/arch/arm/boot/dts/zynq-zc706.dts
 +++ b/arch/arm/boot/dts/zynq-zc706.dts
-@@ -27,7 +27,15 @@ chosen {
+@@ -27,6 +27,14 @@ chosen {
  		bootargs = "";
  		stdout-path = "serial0:115200n8";
  	};
@@ -362,11 +361,10 @@ index 6a6e8312b3f7..ba01bbc67db5 100644
 +		reg = <0xe0002000 0x1000>;
 +		view-port = <0x0170>;
 +		drv-vbus;
- };
 +};
+ };
  
  &clkc {
- 	ps-clk-frequency = <33333333>;
 @@ -352,6 +360,7 @@ &uart1 {
  &usb0 {
  	status = "okay";
@@ -401,10 +399,18 @@ index 60f73cd2601b..2d531a6ea2ca 100644
 +	usb-phy = <&usb_phy0>;
  };
 diff --git a/arch/arm/configs/zynq_pluto_defconfig b/arch/arm/configs/zynq_pluto_defconfig
-index 506eec34f4b4..36aa5478084a 100644
+index 506eec34f4b4..73dae08a443c 100644
 --- a/arch/arm/configs/zynq_pluto_defconfig
 +++ b/arch/arm/configs/zynq_pluto_defconfig
-@@ -269,3 +269,21 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
+@@ -13,6 +13,7 @@ CONFIG_BLK_DEV_INITRD=y
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ CONFIG_SLAB=y
+@@ -269,3 +270,21 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
  CONFIG_DEBUG_LL=y
  CONFIG_DEBUG_ZYNQ_UART1=y
  CONFIG_EARLY_PRINTK=y
