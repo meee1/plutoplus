@@ -43,6 +43,9 @@ jobs:
         with:
           path: |
             plutosdr-fw/buildroot/dl/
+            plutosdr-fw/build/zImage
+            plutosdr-fw/build/system_top.bit
+            plutosdr-fw/build/system_top.xsa
           key: ${{ runner.os }}-dl
 
       # Runs a set of commands using the runners shell
@@ -70,6 +73,9 @@ jobs:
         with:
           path: |
             plutosdr-fw/buildroot/dl/
+            plutosdr-fw/build/zImage
+            plutosdr-fw/build/system_top.bit
+            plutosdr-fw/build/system_top.xsa
           key: ${{ runner.os }}-dl-${{ steps.get-date.outputs.date }}
           
       - uses: actions/upload-artifact@v3
@@ -218,7 +224,7 @@ jobs:
             export BR2_USE_CCACHE=1
             export BR2_CCACHE_DIR=$(pwd)/.ccache
             cd plutosdr-fw
-            make pluto.dfu -j8
+            make -j8
           
       - uses: actions/upload-artifact@v3
         with:
