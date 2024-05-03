@@ -62,7 +62,7 @@ jobs:
           cd plutosdr-fw
           touch buildroot/board/pluto/msd/LICENSE.html
           
-          make
+          make  -j8
           
       - name: Cache dl save
         uses: actions/cache/save@v3
@@ -103,7 +103,7 @@ jobs:
           git clone https://github.com/tvelliott/libfec.git
           cd libfec          
           rm libfec.so
-          make
+          make  -j8
           
   build3:
     # The type of runner that the job will run on
@@ -218,7 +218,7 @@ jobs:
             export BR2_USE_CCACHE=1
             export BR2_CCACHE_DIR=$(pwd)/.ccache
             cd plutosdr-fw
-            make
+            make -j8
           
       - uses: actions/upload-artifact@v3
         with:
