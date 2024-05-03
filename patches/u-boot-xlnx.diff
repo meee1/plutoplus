@@ -52,10 +52,20 @@ index 0daf46221e..5991fa6cf7 100644
 +CONFIG_DM_ETH=y
 +CONFIG_ZYNQ_GEM=y
 diff --git a/include/configs/zynq-common.h b/include/configs/zynq-common.h
-index fd50caf450..9765ca4a08 100644
+index fd50caf450..515dece1bf 100644
 --- a/include/configs/zynq-common.h
 +++ b/include/configs/zynq-common.h
-@@ -257,7 +257,7 @@
+@@ -16,6 +16,9 @@
+ # define CONFIG_CPU_FREQ_HZ	800000000
+ #endif
+ 
++/* TODO Define LibreSDR PS Clock Frequency to 50MHz in dts */
++#define CONFIG_ZYNQ_PS_CLK_FREQ	50000000UL
++
+ #define	CONFIG_SYS_DEVICE_NULLDEV	1
+ 
+ /* Cache options */
+@@ -257,7 +260,7 @@
  	"fdt_high=0x20000000\0"	\
  	"initrd_high=0x20000000\0"	\
  	"bootenv=uEnv.txt\0" \
@@ -64,12 +74,18 @@ index fd50caf450..9765ca4a08 100644
  	"clear_reset_cause=mw f8000008 df0d && mw f8000258 00400000 && mw f8000004 767b\0" \
  	"loadbootenv=load mmc 0 ${loadbootenv_addr} ${bootenv}\0" \
  	"importbootenv=echo Importing environment from SD ...; " \
-@@ -269,7 +269,7 @@
- 			"fi; " \
- 		"fi; \0" \
- 	"refclk_source=internal\0" \
--	"mode=1r1t\0" \
-+	"mode=2r2t\0" \
- 	"adi_loadvals_pluto=if test -n \"${ad936x_ext_refclk}\" && test ! -n \"${ad936x_skip_ext_refclk}\"; then " \
- 			"fdt set /clocks/clock@0 clock-frequency ${ad936x_ext_refclk}; " \
- 		"fi; " \
+@@ -362,6 +365,14 @@
+ 			"echo Running uenvcmd ...; " \
+ 			"run uenvcmd; " \
+ 		"fi\0" \
++	"sdboot=if mmcinfo; then " \
++			"run uenvboot; " \
++			"echo Copying Linux from SD to RAM... && " \
++			"load mmc 0 ${fit_load_address} ${kernel_image} && " \
++			"load mmc 0 ${devicetree_load_address} ${devicetree_image} && " \
++			"load mmc 0 ${ramdisk_load_address} ${ramdisk_image} && " \
++			"bootm ${fit_load_address} ${ramdisk_load_address} ${devicetree_load_address}; " \
++		"fi\0" \
+ 	"usbboot=if usb start; then " \
+ 			"run uenvboot; " \
+ 			"echo Copying Linux from USB to RAM... && " \

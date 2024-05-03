@@ -1,39 +1,147 @@
 diff --git a/board/pluto/S23udc b/board/pluto/S23udc
-index 202347f0..049124b1 100644
+index 202347f0..33cb0a73 100644
 --- a/board/pluto/S23udc
 +++ b/board/pluto/S23udc
-@@ -118,7 +118,8 @@ case "$1" in
+@@ -6,7 +6,7 @@ CONFIGFS=/sys/kernel/config/usb_gadget
+ GADGET=$CONFIGFS/composite_gadget
+ IIOD_OPTS="-D -n $ENDPOINTS -F /dev/iio_ffs"
+ UDC_HANDLE_SUSPEND=`fw_printenv -n udc_handle_suspend 2> /dev/null || echo 0`
+-USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo rndis`
++USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo 0`
+ 
+ if [ "$USB_ETH_MODE" == "ncm" ]
+ then
+@@ -101,14 +101,7 @@ case "$1" in
+ 	mkdir -p $GADGET/configs/c.1
+ 	mkdir -p $GADGET/configs/c.1/strings/0x409
+ 	echo "RNDIS/MSD/ACM/IIOUSBD" > $GADGET/configs/c.1/strings/0x409/configuration
+-
+-	# In case the M2k is powered via the Power USB, advertise low power on the DATA USB
+-	if [ "$TARGET" == "m2k" ]; then
+-		echo 905 > /sys/class/gpio/export
+-		[ "`cat /sys/class/gpio/gpio905/value`" == "1" ] && echo 4 > $GADGET/configs/c.1/MaxPower || echo 500 > $GADGET/configs/c.1/MaxPower
+-	else
+-		echo 500 > $GADGET/configs/c.1/MaxPower
+-	fi
++	echo 500 > $GADGET/configs/c.1/MaxPower
+ 
+ 	ln -s $GADGET/functions/$USB_NET_FUNCTION $GADGET/configs/c.1
+ 	ln -s $GADGET/functions/mass_storage.0 $GADGET/configs/c.1
+@@ -118,7 +111,7 @@ case "$1" in
  	mkdir -p /dev/iio_ffs
  	mount iio_ffs -t functionfs /dev/iio_ffs 2> /dev/null
  
 -	start-stop-daemon -S -b -q -m -p /var/run/iiod.pid -x  /usr/sbin/iiod  -- $IIOD_OPTS
-+	#start-stop-daemon -S -b -q -m -p /var/run/iiod.pid -x  /usr/sbin/iiod  -- $IIOD_OPTS
-+        start-stop-daemon -S -b -q -m -p /var/run/iiod.pid -x /usr/bin/chrt -- -r 99 /usr/bin/taskset -c 1 /usr/sbin/iiod $IIOD_OPTS
++	start-stop-daemon -S -b -q -m -p /var/run/iiod.pid -x /usr/bin/chrt -- -r 99 /usr/bin/taskset -c 1 /usr/sbin/iiod $IIOD_OPTS
  	sleep 0.2
  
  	echo ci_hdrc.0 > $GADGET/UDC
+diff --git a/board/pluto/S40network b/board/pluto/S40network
+index 067bbdc0..040e7dda 100644
+--- a/board/pluto/S40network
++++ b/board/pluto/S40network
+@@ -20,8 +20,13 @@ create_system_files () {
+ 	IPADDR_HOST=`fw_printenv -n ipaddr_host 2> /dev/null || echo 192.168.2.10`
+ 	NETMASK=`fw_printenv -n netmask 2> /dev/null || echo 255.255.255.0`
+ 
+-	ETH_IPADDR=`fw_printenv -n ipaddr_eth 2> /dev/null`
++	ETH1_IPADDR=`fw_printenv -n ipaddr_eth1 2> /dev/null || echo 192.168.3.8`
++	ETH1_NETMASK=`fw_printenv -n net1mask_eth 2> /dev/null || echo 255.255.255.1`
++
++
++	ETH_IPADDR=`fw_printenv -n ipaddr_eth 2> /dev/nulli || echo 192.168.1.10`
+ 	ETH_NETMASK=`fw_printenv -n netmask_eth 2> /dev/null || echo 255.255.255.0`
++	ETH_GATEWAY=`fw_printenv -n eth_gateway 2> /dev/null || echo 192.168.1.1`
+ 
+ 	WLAN_SSID=`fw_printenv -n ssid_wlan 2> /dev/null`
+ 	WLAN_PWD=`fw_printenv -n pwd_wlan 2> /dev/null`
+@@ -29,11 +34,10 @@ create_system_files () {
+ 
+ 	XO_CORRECTION=`fw_printenv -n xo_correction 2> /dev/null`
+ 	UDC_HANDLE_SUSPEND=`fw_printenv -n udc_handle_suspend 2> /dev/null || echo 0`
+-	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo rndis`
++	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo 0`
+ 
+ 	### /etc/udhcpd.conf ###
+ 	echo "start $IPADDR_HOST" > $UDHCPD_CONF
+-	echo "end $IPADDR_HOST" >> $UDHCPD_CONF
+ 	echo "interface usb0" >> $UDHCPD_CONF
+ 	echo "option subnet $NETMASK" >> $UDHCPD_CONF
+ 
+@@ -41,17 +45,26 @@ create_system_files () {
+ 	echo -e "auto lo\n""iface lo inet loopback\n" > $IFAC
+ 	echo -e "auto usb0\n""iface usb0 inet static" >> $IFAC
+ 	echo -e "\taddress $IPADDR\n""\tnetmask $NETMASK\n" >> $IFAC
+-	echo -e "auto usb1\n""iface usb1 inet dhcp\n" >> $IFAC
+ 
+ 	echo -e "auto eth0" >> $IFAC
+ 	if [ -n "$ETH_IPADDR" ]
+ 	then
+ 		echo -e "iface eth0 inet static" >> $IFAC
+-		echo -e "\taddress $ETH_IPADDR\n""\tnetmask $ETH_NETMASK\n" >> $IFAC
++		echo -e "\taddress $ETH_IPADDR\n""\tnetmask $ETH_NETMASK" >> $IFAC
++		echo -e "\tgateway $ETH_GATEWAY\n" >> $IFAC
+ 	else
+ 		echo -e "iface eth0 inet dhcp\n" >> $IFAC
+ 	fi
+ 
++	# echo -e "auto eth0:0" >> $IFAC
++	# if [ -n "$ETH1_IPADDR" ]
++	# then
++	# 	echo -e "iface eth0:0 inet static" >> $IFAC
++	# 	echo -e "\taddress  $ETH1_IPADDR\n""\tnetmask $ETH1_NETMASK" >> $IFAC
++	# else
++	# 	echo -e "iface eth0:0 inet dhcp\n" >> $IFAC
++	# fi
++
+ 	### /etc/wpa.conf ###
+ 	if [ -n "$WLAN_SSID" ]
+ 	then
 diff --git a/board/pluto/S41network b/board/pluto/S41network
-index 78433a60..954284ad 100644
+index 78433a60..75215996 100644
 --- a/board/pluto/S41network
 +++ b/board/pluto/S41network
-@@ -7,13 +7,13 @@ case "$1" in
+@@ -5,15 +5,15 @@ source /etc/device_config
+ 
+ case "$1" in
  	start)
- 		echo -n "Starting dhcpd Daemon & httpd Server: "
+-		echo -n "Starting dhcpd Daemon & httpd Server: "
++		echo -n "Starting dhcpd Daemon: "
  		start-stop-daemon -S -q -p /var/run/udhcpd.pid -x /usr/sbin/udhcpd -- $UDHCPD_CONF
 -		httpd -h /www
-+		#httpd -h /www
++		# httpd -h /www
  		[ $? = 0 ] && echo "OK" || echo "FAIL"
  		;;
  
  	stop)
- 		echo -n "Stopping dhcpd Daemon & httpd Server: "
+-		echo -n "Stopping dhcpd Daemon & httpd Server: "
 -		killall -7 httpd
-+		#killall -7 httpd
++		echo -n "Stopping dhcpd Daemon: "
++		# killall -7 httpd
  		start-stop-daemon -K -q -p /var/run/udhcpd.pid 2>/dev/null
  		[ $? = 0 ] && echo "OK" || echo "FAIL"
  		;;
+diff --git a/board/pluto/S45msd b/board/pluto/S45msd
+index 8b73beeb..c125f143 100644
+--- a/board/pluto/S45msd
++++ b/board/pluto/S45msd
+@@ -13,12 +13,12 @@ patch_html_page() {
+ 	SERIAL=`cat /sys/kernel/config/usb_gadget/composite_gadget/strings/0x409/serialnumber`
+ 	MACHOST=`cat /sys/kernel/config/usb_gadget/composite_gadget/functions/*/host_addr`
+ 	MAC=`cat /sys/kernel/config/usb_gadget/composite_gadget/functions/*/dev_addr`
+-	IIO=`iio_info -V 2>/dev/null | tail -1`
++	IIO=`iio_info 2>/dev/null | grep "Library version:"`
+ 	BUILD=`grep device-fw /opt/VERSIONS | cut -d ' ' -f 2`
+ 	FPGA=`grep hdl /opt/VERSIONS | cut -d ' ' -f 2`
+ 	ROOTFS=`grep buildroot /opt/VERSIONS | cut -d ' ' -f 2`
+ 	UBOOT=`cat /proc/cmdline | tr  "=" "\n" | grep "U-Boot"`
+-	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo rndis`
++	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo 0`
+ 	if [ "$USB_ETH_MODE" == "ncm" ]; then
+ 		NETWORKUSB="Communications Device Class – Network Control Model (CDC-NCM)"
+ 	elif [ "$USB_ETH_MODE" == "ecm" ]; then
 diff --git a/board/pluto/busybox-1.25.0.config b/board/pluto/busybox-1.25.0.config
-index 88728cc9..15493831 100644
+index 88728cc9..65bf5222 100644
 --- a/board/pluto/busybox-1.25.0.config
 +++ b/board/pluto/busybox-1.25.0.config
 @@ -669,8 +669,8 @@ CONFIG_SWAPON=y
@@ -47,21 +155,6 @@ index 88728cc9..15493831 100644
  CONFIG_UEVENT=y
  CONFIG_UMOUNT=y
  CONFIG_FEATURE_UMOUNT_ALL=y
-@@ -880,10 +880,10 @@ CONFIG_FEATURE_IP_NEIGH=y
- CONFIG_NAMEIF=y
- # CONFIG_FEATURE_NAMEIF_EXTENDED is not set
- # CONFIG_NBDCLIENT is not set
--# CONFIG_NC is not set
--# CONFIG_NC_SERVER is not set
--# CONFIG_NC_EXTRA is not set
--# CONFIG_NC_110_COMPAT is not set
-+CONFIG_NC=y
-+CONFIG_NC_SERVER=y
-+CONFIG_NC_EXTRA=y
-+CONFIG_NC_110_COMPAT=y
- CONFIG_NETSTAT=y
- # CONFIG_FEATURE_NETSTAT_WIDE is not set
- # CONFIG_FEATURE_NETSTAT_PRG is not set
 @@ -923,7 +923,7 @@ CONFIG_TRACEROUTE=y
  # CONFIG_TRACEROUTE6 is not set
  # CONFIG_FEATURE_TRACEROUTE_VERBOSE is not set
@@ -86,6 +179,22 @@ index 88728cc9..15493831 100644
  CONFIG_UPTIME=y
  # CONFIG_FEATURE_UPTIME_UTMP_SUPPORT is not set
  CONFIG_WATCH=y
+diff --git a/board/pluto/device_persistent_keys b/board/pluto/device_persistent_keys
+index a67d3a8d..bd3a7f7d 100644
+--- a/board/pluto/device_persistent_keys
++++ b/board/pluto/device_persistent_keys
+@@ -8,9 +8,9 @@ cat /proc/mounts | grep -q mtd2 || (echo "Filesystem not mounted use device_form
+ 
+ #dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
+ [[ ! -f ${KEYFILE} ]] && dropbearkey -t ecdsa -f ${KEYFILE}
+-install -D /etc/dropbear/dropbear_* -t /mnt/jffs2/etc/dropbear
++install -D ${KEYFILE} -t /mnt/jffs2/etc/dropbear
+ cd /etc/dropbear
+-md5sum dropbear_* /etc/dropbear/ 2>/dev/null > /mnt/jffs2/etc/dropbear/keys.md5
++md5sum dropbear* /etc/dropbear/ 2>/dev/null > /mnt/jffs2/etc/dropbear/keys.md5
+ 
+ if [ -f ${IDFILE} ]; then
+  install -D ${IDFILE} -t /mnt/jffs2/root/.ssh
 diff --git a/board/pluto/motd b/board/pluto/motd
 index a3b3f6f6..55601033 100644
 --- a/board/pluto/motd

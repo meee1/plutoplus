@@ -1,5 +1,5 @@
 diff --git a/projects/pluto/system_bd.tcl b/projects/pluto/system_bd.tcl
-index 4787085d0..f42fd73dc 100644
+index 4787085d0..3ff49048a 100644
 --- a/projects/pluto/system_bd.tcl
 +++ b/projects/pluto/system_bd.tcl
 @@ -50,6 +50,13 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ 100.0
@@ -51,7 +51,7 @@ index 4787085d0..f42fd73dc 100644
  ad_ip_parameter sys_ps7 CONFIG.PCW_MIO_49_PULLUP {disabled}
  ad_ip_parameter sys_ps7 CONFIG.PCW_MIO_53_PULLUP {enabled}
  
-+ad_ip_parameter sys_ps7 CONFIG.PCW_APU_PERIPHERAL_FREQMHZ 750
++ad_ip_parameter sys_ps7 CONFIG.PCW_APU_PERIPHERAL_FREQMHZ 667
 +
 +
  # DDR MT41K256M16 HA-125 (32M, 16bit, 8banks)
