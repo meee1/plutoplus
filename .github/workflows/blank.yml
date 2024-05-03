@@ -218,7 +218,7 @@ jobs:
             export BR2_USE_CCACHE=1
             export BR2_CCACHE_DIR=$(pwd)/.ccache
             cd plutosdr-fw
-            make -j8
+            make pluto.dfu -j8
           
       - uses: actions/upload-artifact@v3
         with:
