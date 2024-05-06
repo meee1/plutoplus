@@ -466,7 +466,7 @@ index 60f73cd2601b..2d531a6ea2ca 100644
 +	usb-phy = <&usb_phy0>;
  };
 diff --git a/arch/arm/configs/zynq_pluto_defconfig b/arch/arm/configs/zynq_pluto_defconfig
-index 506eec34f4b4..73dae08a443c 100644
+index 506eec34f4b4..ce6e4f683d7b 100644
 --- a/arch/arm/configs/zynq_pluto_defconfig
 +++ b/arch/arm/configs/zynq_pluto_defconfig
 @@ -13,6 +13,7 @@ CONFIG_BLK_DEV_INITRD=y
@@ -477,7 +477,7 @@ index 506eec34f4b4..73dae08a443c 100644
  CONFIG_EMBEDDED=y
  CONFIG_PERF_EVENTS=y
  CONFIG_SLAB=y
-@@ -269,3 +270,21 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
+@@ -269,3 +270,27 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
  CONFIG_DEBUG_LL=y
  CONFIG_DEBUG_ZYNQ_UART1=y
  CONFIG_EARLY_PRINTK=y
@@ -499,6 +499,12 @@ index 506eec34f4b4..73dae08a443c 100644
 +CONFIG_BRIDGE=y
 +CONFIG_BATMAN_ADV=y
 +CONFIG_WIREGUARD=y
++
++CONFIG_CPU_FREQ=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
++CONFIG_CPU_FREQ_GOV_USERSPACE=y
++CONFIG_CPUFREQ_DT=y
++CONFIG_CPUFREQ_DT_PLATDEV=y
 diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
 index 8355c3895894..81fed5c109db 100644
 --- a/arch/arm/mm/Kconfig
