@@ -93,8 +93,30 @@ index fe5569225fd3..1483505ae12f 100644
 +    pinctrl-names = "default";
 +    pinctrl-0 = <&pinctrl_usb0_default>;
 +};
+diff --git a/arch/arm/boot/dts/zynq-pluto-sdr.dts b/arch/arm/boot/dts/zynq-pluto-sdr.dts
+index eca438ae1fad..09f0cfc299d4 100644
+--- a/arch/arm/boot/dts/zynq-pluto-sdr.dts
++++ b/arch/arm/boot/dts/zynq-pluto-sdr.dts
+@@ -14,17 +14,6 @@
+ /dts-v1/;
+ #include "zynq-pluto-sdr.dtsi"
+ 
+-
+-&axi_i2c0 {
+-	current_limiter@5a {
+-		compatible = "adi,adm1177-iio";
+-		reg = <0x5a>;
+-		adi,r-sense-mohm = <50>; /* 50 mOhm */
+-		adi,shutdown-threshold-ma = <1059>; /* 1.059 A */
+-		adi,vrange-high-enable;
+-	};
+-};
+-
+ / {
+ 	leds {
+ 		compatible = "gpio-leds";
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-index 08c5a42204f3..ddbfad672d62 100644
+index 08c5a42204f3..301d369064a4 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 @@ -30,10 +30,30 @@ ad9364_clkin: clock@0 {
@@ -174,7 +196,27 @@ index 08c5a42204f3..ddbfad672d62 100644
  / {
  	fpga_axi: fpga-axi@0 {
  		compatible = "simple-bus";
-@@ -179,6 +226,148 @@ mwipcore@43c00000 {
+@@ -97,19 +144,6 @@ fpga_axi: fpga-axi@0 {
+ 		#size-cells = <0x1>;
+ 		ranges;
+ 
+-		axi_i2c0: i2c@41600000 {
+-			compatible = "xlnx,axi-iic-1.02.a", "xlnx,xps-iic-2.00.a";
+-			reg = <0x41600000 0x10000>;
+-			interrupt-parent = <&intc>;
+-			interrupts = <0 59 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clkc 15>;
+-			clock-names = "pclk";
+-
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-		};
+-
+ 		rx_dma: dma@7c400000 {
+ 			compatible = "adi,axi-dmac-1.00.a";
+ 			reg = <0x7c400000 0x1000>;
+@@ -179,6 +213,148 @@ mwipcore@43c00000 {
  	};
  };
  
