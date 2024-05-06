@@ -58,6 +58,27 @@ index b82bf5a25641..6a80b110a07a 100644
  };
 -
 -
+diff --git a/arch/arm/boot/dts/zynq-pluto-sdr-revb.dts b/arch/arm/boot/dts/zynq-pluto-sdr-revb.dts
+index 0df55ea39579..f8349e13a2f4 100644
+--- a/arch/arm/boot/dts/zynq-pluto-sdr-revb.dts
++++ b/arch/arm/boot/dts/zynq-pluto-sdr-revb.dts
+@@ -17,16 +17,6 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ 
+-&axi_i2c0 {
+-	current_limiter@5a {
+-		compatible = "adi,adm1177-iio";
+-		reg = <0x5a>;
+-		adi,r-sense-mohm = <50>; /* 50 mOhm */
+-		adi,shutdown-threshold-ma = <1059>; /* 1.059 A */
+-		adi,vrange-high-enable;
+-	};
+-};
+-
+ / {
+ 	model = "Analog Devices PlutoSDR Rev.B (Z7010/AD9363)";
+ 
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts b/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
 index fe5569225fd3..1483505ae12f 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
