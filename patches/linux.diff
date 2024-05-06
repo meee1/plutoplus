@@ -159,10 +159,10 @@ index 08c5a42204f3..301d369064a4 100644
 +	status = "okay";
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pinctrl_uart1_default>;
-+};
 +
-+&clkc {
-+	ps-clk-frequency = <50000000>;
++
++
++
  };
  
  &sdhci0 {
