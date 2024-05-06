@@ -94,10 +94,10 @@ index fe5569225fd3..1483505ae12f 100644
 +    pinctrl-0 = <&pinctrl_usb0_default>;
 +};
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-index 08c5a42204f3..0fe5bba8a082 100644
+index 08c5a42204f3..ddbfad672d62 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-@@ -30,10 +30,26 @@ ad9364_clkin: clock@0 {
+@@ -30,10 +30,30 @@ ad9364_clkin: clock@0 {
  		};
  	};
  
@@ -116,6 +116,10 @@ index 08c5a42204f3..0fe5bba8a082 100644
 +	status = "okay";
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pinctrl_uart1_default>;
++};
++
++&clkc {
++	ps-clk-frequency = <50000000>;
  };
  
  &sdhci0 {
@@ -125,7 +129,7 @@ index 08c5a42204f3..0fe5bba8a082 100644
  };
  
  &watchdog0 {
-@@ -42,9 +58,24 @@ &watchdog0 {
+@@ -42,9 +62,24 @@ &watchdog0 {
  };
  
  &usb0 {
@@ -151,7 +155,7 @@ index 08c5a42204f3..0fe5bba8a082 100644
  };
  
  &qspi {
-@@ -90,6 +121,18 @@ channel@0 {
+@@ -90,6 +125,18 @@ channel@0 {
  	};
  };
  
@@ -170,7 +174,7 @@ index 08c5a42204f3..0fe5bba8a082 100644
  / {
  	fpga_axi: fpga-axi@0 {
  		compatible = "simple-bus";
-@@ -179,6 +222,148 @@ mwipcore@43c00000 {
+@@ -179,6 +226,148 @@ mwipcore@43c00000 {
  	};
  };
  
