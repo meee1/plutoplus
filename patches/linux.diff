@@ -450,6 +450,44 @@ index 8355c3895894..81fed5c109db 100644
  	select CPU_THUMB_CAPABLE
  	select CPU_TLB_V7 if MMU
  
+diff --git a/drivers/iio/adc/ad9361_conv.c b/drivers/iio/adc/ad9361_conv.c
+index 1902e7d07501..79f3b9359d40 100644
+--- a/drivers/iio/adc/ad9361_conv.c
++++ b/drivers/iio/adc/ad9361_conv.c
+@@ -205,6 +205,24 @@ static struct iio_chan_spec_ext_info axiadc_ext_info[] = {
+ 		.shift = 0,						\
+ 	  },								\
+ 	}
++    
++#define AIM_CHAN8(_chan, _si, _bits, _sign)			\
++	{ .type = IIO_VOLTAGE,						\
++	  .indexed = 1,							\
++	  .channel = _chan,						\
++	  .info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
++			BIT(IIO_CHAN_INFO_CALIBBIAS) |			\
++			BIT(IIO_CHAN_INFO_CALIBPHASE),			\
++	  .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
++	  .ext_info = axiadc_ext_info,					\
++	  .scan_index = _si,						\
++	  .scan_type = {						\
++		.sign = _sign,						\
++		.realbits = _bits,					\
++		.storagebits = 8,					\
++		.shift = 0,						\
++	  },								\
++	}
+ 
+ #define AIM_MC_CHAN(_chan, _si, _bits, _sign)			\
+ 	{ .type = IIO_VOLTAGE,						\
+@@ -266,7 +284,7 @@ static const struct axiadc_chip_info axiadc_chip_info_tbl[] = {
+ 		.max_rate = 61440000UL,
+ 		.max_testmode = 0,
+ 		.num_channels = 2,
+-		.channel[0] = AIM_CHAN(0, 0, 12, 'S'),
++		.channel[0] = AIM_CHAN8(0, 0, 12, 'S'),
+ 		.channel[1] = AIM_CHAN(1, 1, 12, 'S'),
+ 	},
+ 
 diff --git a/init/Kconfig b/init/Kconfig
 index 11f8a845f259..806c196d5127 100644
 --- a/init/Kconfig
