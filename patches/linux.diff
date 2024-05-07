@@ -485,7 +485,8 @@ index 1902e7d07501..79f3b9359d40 100644
  		.num_channels = 2,
 -		.channel[0] = AIM_CHAN(0, 0, 12, 'S'),
 +		.channel[0] = AIM_CHAN8(0, 0, 12, 'S'),
- 		.channel[1] = AIM_CHAN(1, 1, 12, 'S'),
+-		.channel[1] = AIM_CHAN(1, 1, 12, 'S'),
++		.channel[1] = AIM_CHAN8(1, 1, 12, 'S'),
  	},
  
 diff --git a/init/Kconfig b/init/Kconfig
