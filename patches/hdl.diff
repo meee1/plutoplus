@@ -1,5 +1,5 @@
 diff --git a/projects/pluto/system_bd.tcl b/projects/pluto/system_bd.tcl
-index 4787085d0..06c5f7e38 100644
+index 4787085d0..38c75eae5 100644
 --- a/projects/pluto/system_bd.tcl
 +++ b/projects/pluto/system_bd.tcl
 @@ -50,6 +50,13 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ 100.0
@@ -96,19 +96,19 @@ index 4787085d0..06c5f7e38 100644
 +  # Create instance: decim_slice3, and set properties
 +  set decim_slice3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 decim_slice3 ]
 +  set_property -dict [ list \
-+   CONFIG.DIN_FROM {11} \
++   CONFIG.DIN_FROM {12} \
 +   CONFIG.DIN_TO {5} \
 +   CONFIG.DIN_WIDTH {16} \
-+   CONFIG.DOUT_WIDTH {7} \
++   CONFIG.DOUT_WIDTH {8} \
 + ] $decim_slice3
 +
 +  # Create instance: decim_slice4, and set properties
 +  set decim_slice4 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 decim_slice4 ]
 +  set_property -dict [ list \
-+   CONFIG.DIN_FROM {11} \
++   CONFIG.DIN_FROM {12} \
 +   CONFIG.DIN_TO {5} \
 +   CONFIG.DIN_WIDTH {16} \
-+   CONFIG.DOUT_WIDTH {7} \
++   CONFIG.DOUT_WIDTH {8} \
 + ] $decim_slice4
 +
 +
