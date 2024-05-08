@@ -1,5 +1,5 @@
 diff --git a/board/pluto/S23udc b/board/pluto/S23udc
-index 202347f0..33cb0a73 100644
+index 202347f0..b599f699 100644
 --- a/board/pluto/S23udc
 +++ b/board/pluto/S23udc
 @@ -6,7 +6,7 @@ CONFIGFS=/sys/kernel/config/usb_gadget
@@ -27,15 +27,6 @@ index 202347f0..33cb0a73 100644
  
  	ln -s $GADGET/functions/$USB_NET_FUNCTION $GADGET/configs/c.1
  	ln -s $GADGET/functions/mass_storage.0 $GADGET/configs/c.1
-@@ -118,7 +111,7 @@ case "$1" in
- 	mkdir -p /dev/iio_ffs
- 	mount iio_ffs -t functionfs /dev/iio_ffs 2> /dev/null
- 
--	start-stop-daemon -S -b -q -m -p /var/run/iiod.pid -x  /usr/sbin/iiod  -- $IIOD_OPTS
-+	start-stop-daemon -S -b -q -m -p /var/run/iiod.pid -x  /usr/sbin/iiod  -- $IIOD_OPTS
- 	sleep 0.2
- 
- 	echo ci_hdrc.0 > $GADGET/UDC
 diff --git a/board/pluto/S40network b/board/pluto/S40network
 index 067bbdc0..040e7dda 100644
 --- a/board/pluto/S40network
@@ -217,7 +208,7 @@ index a3b3f6f6..55601033 100644
 -https://wiki.analog.com/university/tools/pluto
 +https://github.com/plutoplus/plutoplus
 diff --git a/configs/zynq_pluto_defconfig b/configs/zynq_pluto_defconfig
-index 6203766e..1c5660a7 100644
+index 6203766e..fec38e53 100644
 --- a/configs/zynq_pluto_defconfig
 +++ b/configs/zynq_pluto_defconfig
 @@ -5,7 +5,11 @@ BR2_ARM_ENABLE_VFP=y

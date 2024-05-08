@@ -1,5 +1,5 @@
 diff --git a/projects/pluto/system_bd.tcl b/projects/pluto/system_bd.tcl
-index 4787085d0..602f1132d 100644
+index 4787085d0..06c5f7e38 100644
 --- a/projects/pluto/system_bd.tcl
 +++ b/projects/pluto/system_bd.tcl
 @@ -50,6 +50,13 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ 100.0
@@ -87,29 +87,11 @@ index 4787085d0..602f1132d 100644
  ad_connect rx_fir_decimator/valid_out_0 cpack/fifo_wr_en
  
  ad_connect axi_ad9361_adc_dma/fifo_wr cpack/packed_fifo_wr
-@@ -383,3 +411,65 @@ ad_cpu_interrupt ps-13 mb-13 axi_ad9361_adc_dma/irq
+@@ -383,3 +411,29 @@ ad_cpu_interrupt ps-13 mb-13 axi_ad9361_adc_dma/irq
  ad_cpu_interrupt ps-12 mb-12 axi_ad9361_dac_dma/irq
  ad_cpu_interrupt ps-11 mb-11 axi_spi/ip2intc_irpt
  
 +
-+
-+  # Create instance: decim_slice1, and set properties
-+  set decim_slice1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 decim_slice1 ]
-+  set_property -dict [ list \
-+   CONFIG.DIN_FROM {15} \
-+   CONFIG.DIN_TO {15} \
-+   CONFIG.DIN_WIDTH {16} \
-+   CONFIG.DOUT_WIDTH {1} \
-+ ] $decim_slice1
-+
-+  # Create instance: decim_slice2, and set properties
-+  set decim_slice2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 decim_slice2 ]
-+  set_property -dict [ list \
-+   CONFIG.DIN_FROM {15} \
-+   CONFIG.DIN_TO {15} \
-+   CONFIG.DIN_WIDTH {16} \
-+   CONFIG.DOUT_WIDTH {1} \
-+ ] $decim_slice2
 +
 +  # Create instance: decim_slice3, and set properties
 +  set decim_slice3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 decim_slice3 ]
@@ -129,31 +111,12 @@ index 4787085d0..602f1132d 100644
 +   CONFIG.DOUT_WIDTH {7} \
 + ] $decim_slice4
 +
-+  # Create instance: xlconcat_0, and set properties
-+  set xlconcat_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0 ]
-+  set_property -dict [ list \
-+   CONFIG.IN0_WIDTH {1} \
-+   CONFIG.IN1_WIDTH {7} \
-+ ] $xlconcat_0
 +
-+  # Create instance: xlconcat_1, and set properties
-+  set xlconcat_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_1 ]
-+  set_property -dict [ list \
-+   CONFIG.IN0_WIDTH {1} \
-+   CONFIG.IN1_WIDTH {7} \
-+ ] $xlconcat_1
-+
-+  connect_bd_net -net decim_slice1_Dout [get_bd_pins decim_slice1/Dout] [get_bd_pins xlconcat_0/In0]
-+  connect_bd_net -net decim_slice2_Dout [get_bd_pins decim_slice2/Dout] [get_bd_pins xlconcat_1/In0]
-+  connect_bd_net -net decim_slice3_Dout [get_bd_pins decim_slice3/Dout] [get_bd_pins xlconcat_0/In1]
-+  connect_bd_net -net decim_slice4_Dout [get_bd_pins decim_slice4/Dout] [get_bd_pins xlconcat_1/In1]
++  connect_bd_net -net decim_slice3_Dout [get_bd_pins decim_slice3/Dout] [get_bd_pins cpack/fifo_wr_data_0]
++  connect_bd_net -net decim_slice4_Dout [get_bd_pins decim_slice4/Dout] [get_bd_pins cpack/fifo_wr_data_1]
 +  
-+  connect_bd_net -net rx_fir_decimator_data_out_0 [get_bd_pins decim_slice1/Din] [get_bd_pins decim_slice3/Din] [get_bd_pins rx_fir_decimator/data_out_0]
-+  connect_bd_net -net rx_fir_decimator_data_out_1 [get_bd_pins decim_slice2/Din] [get_bd_pins decim_slice4/Din] [get_bd_pins rx_fir_decimator/data_out_1]
-+  
-+  connect_bd_net -net xlconcat_0_dout [get_bd_pins cpack/fifo_wr_data_0] [get_bd_pins xlconcat_0/dout]
-+  connect_bd_net -net xlconcat_1_dout [get_bd_pins cpack/fifo_wr_data_1] [get_bd_pins xlconcat_1/dout]
-\ No newline at end of file
++  connect_bd_net -net rx_fir_decimator_data_out_0 [get_bd_pins decim_slice3/Din] [get_bd_pins rx_fir_decimator/data_out_0]
++  connect_bd_net -net rx_fir_decimator_data_out_1 [get_bd_pins decim_slice4/Din] [get_bd_pins rx_fir_decimator/data_out_1]
 diff --git a/projects/pluto/system_constr.xdc b/projects/pluto/system_constr.xdc
 index 3877ade6f..9edbd1f1b 100644
 --- a/projects/pluto/system_constr.xdc
