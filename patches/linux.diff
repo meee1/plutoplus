@@ -85,7 +85,7 @@ diff --git a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi b/arch/arm/boot/dts/zynq-plut
 index e936f48dbd73..bad6c46056a5 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-@@ -40,8 +40,16 @@
+@@ -40,8 +40,21 @@
  
  };
  
@@ -100,6 +100,11 @@ index e936f48dbd73..bad6c46056a5 100644
 -	status = "disabled";
 +	status = "okay";
 +    disable-wp;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sdhci0_default>;
++	xlnx,has-cd = <0x0>;
++	xlnx,has-power = <0x0>;
++	xlnx,has-wp = <0x0>;
  };
  
  &watchdog0 {
