@@ -47,6 +47,7 @@ jobs:
       - name: Run a multi-line script
         env:
           SKIP_LEGAL: 1
+          XSA_URL: "https://github.com/meee1/plutoplus/releases/download/v2/system_top.xsa"
         run: |
           set -o xtrace
           sudo apt-get update
