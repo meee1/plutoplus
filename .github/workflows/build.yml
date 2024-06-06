@@ -32,11 +32,6 @@ jobs:
         run: |
           echo "date=$(/bin/date -u "+%Y%m%d-%H:%M:%S")" >> $GITHUB_OUTPUT
         shell: bash
-        
-      - name: GNU Arm Embedded Toolchain
-        uses: ryanwinter/arm-none-eabi-gcc@v2.0.4    
-        with:
-          release: '10.3-2021.10' # The arm-none-eabi-gcc release to use.
           
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.11
@@ -61,6 +56,7 @@ jobs:
           sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
           sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
           sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev 
+          sudo apt-get install -y arm-linux-gnueabihf-gcc
           ./scripts/apply.sh
           export BR2_USE_CCACHE=1
           export BR2_CCACHE_DIR=$(pwd)/.ccache
