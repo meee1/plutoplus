@@ -71,7 +71,7 @@ jobs:
             .ccache
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}
           
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: image
           path: plutosdr-fw/build
