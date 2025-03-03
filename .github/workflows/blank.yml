@@ -72,7 +72,7 @@ jobs:
             plutosdr-fw/buildroot/dl/
           key: ${{ runner.os }}-dl-${{ steps.get-date.outputs.date }}
           
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: image
           path: plutosdr-fw/build
@@ -221,7 +221,7 @@ jobs:
             cd plutosdr-fw            
             make -j8
           
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: image3
           path: plutosdr-fw/build
