@@ -67,6 +67,9 @@ jobs:
 
           sed -i 's/26aedd8021fa939ab2f53e55904d869207265242fef7ad86aa4673e219b7cbef/4814915de63d975807e918df82bb86021d0e78839e8cc4116a36476d0b33180c/g' buildroot/package/ad936x_ref_cal/ad936x_ref_cal.hash
 
+          rm -rf buildroot/dl/libiio
+          rm -rf buildroot/dl/ad936x_ref_cal
+
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot toolchain
           make -C buildroot libiio
