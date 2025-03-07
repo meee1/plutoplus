@@ -52,10 +52,16 @@ jobs:
           XSA_URL: "https://github.com/meee1/plutoplus/releases/download/v3/system_top.xsa"
         run: |
           set -o xtrace
+          set -e
+          set -x         
+          export VIVADO_SETTINGS=/opt/Xilinx/Vivado/2019.1/settings64.sh
           sudo apt-get update
           sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
           sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
-          sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev 
+          sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev
+          
+          source ${VIVADO_SETTINGS}
+          
           ./scripts/apply.sh
           export BR2_USE_CCACHE=1
           export BR2_CCACHE_DIR=$(pwd)/.ccache
