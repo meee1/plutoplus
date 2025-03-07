@@ -56,6 +56,7 @@ jobs:
           set -x         
           export VIVADO_VERSION=v2019.1
           export VIVADO_SETTINGS=/opt/Xilinx/Vivado/2019.1/settings64.sh
+          export ADI_IGNORE_VERSION_CHECK=1
           sudo apt-get update
           sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
           sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
