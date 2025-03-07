@@ -182,7 +182,6 @@ jobs:
                     
           make -C buildroot ARCH=arm zynq_pluto_defconfig
           make -C buildroot toolchain
-          make -C buildroot libzstd
           make -C buildroot libiio
           make -C buildroot libfec
           make -C buildroot liquid-dsp
