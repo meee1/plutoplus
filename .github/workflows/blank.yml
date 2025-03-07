@@ -60,6 +60,8 @@ jobs:
           sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
           sudo apt-get install -y dfu-util u-boot-tools device-tree-compiler mtools
           sudo apt-get install -y bc python3 cpio zip unzip rsync file wget libmpc-dev
+
+          sudo apt-get -y install libtinfo5 device-tree-compiler bison flex u-boot-tools xvfb libidn11 
           
           source ${VIVADO_SETTINGS}
           
