@@ -62,8 +62,8 @@ jobs:
           cd plutosdr-fw
           touch buildroot/board/pluto/msd/LICENSE.html
 
-          sed -i 's/38483f31be391af66b35542f733e569febe13d3a/v0.26/g' buildroot/package/libiio/libiio.mk         
-          echo sha256 7c1e8cc20d9a853de66455b98ddbe7f8e5842f1d96f615fc4bd8b7a80e3511aa libiio-v0.26-br1.tar.gz >> buildroot/package/libiio/libiio.hash
+          sed -i 's/38483f31be391af66b35542f733e569febe13d3a/a0eca0d/g' buildroot/package/libiio/libiio.mk         
+          echo sha256 7c1e8cc20d9a853de66455b98ddbe7f8e5842f1d96f615fc4bd8b7a80e3511aa libiio-a0eca0d-br1.tar.gz >> buildroot/package/libiio/libiio.hash
 
           sed -i 's/26aedd8021fa939ab2f53e55904d869207265242fef7ad86aa4673e219b7cbef/4814915de63d975807e918df82bb86021d0e78839e8cc4116a36476d0b33180c/g' buildroot/package/ad936x_ref_cal/ad936x_ref_cal.hash
 
