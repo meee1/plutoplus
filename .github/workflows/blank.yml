@@ -54,8 +54,8 @@ jobs:
           set -o xtrace
           set -e
           set -x         
-          export VIVADO_VERSION=v2019.1
-          export VIVADO_SETTINGS=/opt/Xilinx/Vivado/2019.1/settings64.sh
+          export VIVADO_VERSION=v2022.2
+          export VIVADO_SETTINGS=/opt/Xilinx/Vivado/2022.2/settings64.sh
           export ADI_IGNORE_VERSION_CHECK=1
           sudo apt-get update
           sudo apt-get install -y git build-essential fakeroot libncurses5-dev libssl-dev ccache
