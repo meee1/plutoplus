@@ -1,12 +1,11 @@
 diff --git a/projects/pluto/system_bd.tcl b/projects/pluto/system_bd.tcl
-index 4787085d0..247beef18 100644
+index 4787085d0..4fe5cae95 100644
 --- a/projects/pluto/system_bd.tcl
 +++ b/projects/pluto/system_bd.tcl
-@@ -50,6 +50,13 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ 100.0
+@@ -50,6 +50,12 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ 100.0
  ad_ip_parameter sys_ps7 CONFIG.PCW_FPGA1_PERIPHERAL_FREQMHZ 200.0
  ad_ip_parameter sys_ps7 CONFIG.PCW_GPIO_EMIO_GPIO_ENABLE 1
  ad_ip_parameter sys_ps7 CONFIG.PCW_GPIO_EMIO_GPIO_IO 18
-+
 +ad_ip_parameter sys_ps7 CONFIG.PCW_EN_ENET0 1
 +ad_ip_parameter sys_ps7 CONFIG.PCW_ENET0_PERIPHERAL_ENABLE 1
 +ad_ip_parameter sys_ps7 CONFIG.PCW_ENET0_ENET0_IO {MIO 16 .. 27}
@@ -16,7 +15,7 @@ index 4787085d0..247beef18 100644
  ad_ip_parameter sys_ps7 CONFIG.PCW_SPI1_PERIPHERAL_ENABLE 0
  ad_ip_parameter sys_ps7 CONFIG.PCW_I2C0_PERIPHERAL_ENABLE 0
  ad_ip_parameter sys_ps7 CONFIG.PCW_UART1_PERIPHERAL_ENABLE 1
-@@ -57,16 +64,28 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_UART1_UART1_IO {MIO 12 .. 13}
+@@ -57,16 +63,28 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_UART1_UART1_IO {MIO 12 .. 13}
  ad_ip_parameter sys_ps7 CONFIG.PCW_I2C1_PERIPHERAL_ENABLE 0
  ad_ip_parameter sys_ps7 CONFIG.PCW_QSPI_PERIPHERAL_ENABLE 1
  ad_ip_parameter sys_ps7 CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE 1
@@ -47,88 +46,11 @@ index 4787085d0..247beef18 100644
  ad_ip_parameter sys_ps7 CONFIG.PCW_IRQ_F2P_INTR 1
  ad_ip_parameter sys_ps7 CONFIG.PCW_IRQ_F2P_MODE REVERSE
  ad_ip_parameter sys_ps7 CONFIG.PCW_MIO_0_PULLUP {enabled}
-@@ -77,10 +96,14 @@ ad_ip_parameter sys_ps7 CONFIG.PCW_MIO_48_PULLUP {enabled}
- ad_ip_parameter sys_ps7 CONFIG.PCW_MIO_49_PULLUP {disabled}
- ad_ip_parameter sys_ps7 CONFIG.PCW_MIO_53_PULLUP {enabled}
- 
-+ad_ip_parameter sys_ps7 CONFIG.PCW_APU_PERIPHERAL_FREQMHZ 667
-+
-+
- # DDR MT41K256M16 HA-125 (32M, 16bit, 8banks)
- 
- ad_ip_parameter sys_ps7 CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K256M16 RE-125}
- ad_ip_parameter sys_ps7 CONFIG.PCW_UIPARAM_DDR_BUS_WIDTH {16 Bit}
-+ad_ip_parameter sys_ps7 CONFIG.PCW_UIPARAM_ACT_DDR_FREQ_MHZ 525
- ad_ip_parameter sys_ps7 CONFIG.PCW_UIPARAM_DDR_USE_INTERNAL_VREF 0
- ad_ip_parameter sys_ps7 CONFIG.PCW_UIPARAM_DDR_TRAIN_WRITE_LEVEL 1
- ad_ip_parameter sys_ps7 CONFIG.PCW_UIPARAM_DDR_TRAIN_READ_GATE 1
-@@ -218,13 +241,18 @@ ad_ip_parameter axi_ad9361_adc_dma CONFIG.SYNC_TRANSFER_START 0
- ad_ip_parameter axi_ad9361_adc_dma CONFIG.AXI_SLICE_SRC 0
- ad_ip_parameter axi_ad9361_adc_dma CONFIG.AXI_SLICE_DEST 0
- ad_ip_parameter axi_ad9361_adc_dma CONFIG.DMA_2D_TRANSFER 0
--ad_ip_parameter axi_ad9361_adc_dma CONFIG.DMA_DATA_WIDTH_SRC 64
-+ad_ip_parameter axi_ad9361_adc_dma CONFIG.DMA_DATA_WIDTH_SRC 32
- ad_ip_parameter axi_ad9361_adc_dma CONFIG.SYNC_TRANSFER_START {true}
- 
- ad_add_decimation_filter "rx_fir_decimator" 8 2 1 {61.44} {61.44} \
-                          "$ad_hdl_dir/library/util_fir_int/coefile_int.coe"
- ad_ip_instance xlslice decim_slice
--ad_ip_instance util_cpack2 cpack
-+#ad_ip_instance util_cpack2 cpack
-+  # Create instance: cpack, and set properties
-+  set cpack [ create_bd_cell -type ip -vlnv analog.com:user:util_cpack2:1.0 cpack ]
-+  set_property -dict [ list \
-+   CONFIG.SAMPLE_DATA_WIDTH {8} \
-+ ] $cpack
- 
- # connections
- 
-@@ -262,8 +290,8 @@ ad_connect axi_ad9361/adc_data_q1 cpack/fifo_wr_data_3
- 
- ad_connect cpack/enable_0 rx_fir_decimator/enable_out_0
- ad_connect cpack/enable_1 rx_fir_decimator/enable_out_1
--ad_connect cpack/fifo_wr_data_0 rx_fir_decimator/data_out_0
--ad_connect cpack/fifo_wr_data_1 rx_fir_decimator/data_out_1
-+#ad_connect cpack/fifo_wr_data_0 rx_fir_decimator/data_out_0
-+#ad_connect cpack/fifo_wr_data_1 rx_fir_decimator/data_out_1
- ad_connect rx_fir_decimator/valid_out_0 cpack/fifo_wr_en
- 
- ad_connect axi_ad9361_adc_dma/fifo_wr cpack/packed_fifo_wr
-@@ -383,3 +411,29 @@ ad_cpu_interrupt ps-13 mb-13 axi_ad9361_adc_dma/irq
- ad_cpu_interrupt ps-12 mb-12 axi_ad9361_dac_dma/irq
- ad_cpu_interrupt ps-11 mb-11 axi_spi/ip2intc_irpt
- 
-+
-+
-+  # Create instance: decim_slice3, and set properties
-+  set decim_slice3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 decim_slice3 ]
-+  set_property -dict [ list \
-+   CONFIG.DIN_FROM {11} \
-+   CONFIG.DIN_TO {4} \
-+   CONFIG.DIN_WIDTH {16} \
-+   CONFIG.DOUT_WIDTH {8} \
-+ ] $decim_slice3
-+
-+  # Create instance: decim_slice4, and set properties
-+  set decim_slice4 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 decim_slice4 ]
-+  set_property -dict [ list \
-+   CONFIG.DIN_FROM {11} \
-+   CONFIG.DIN_TO {4} \
-+   CONFIG.DIN_WIDTH {16} \
-+   CONFIG.DOUT_WIDTH {8} \
-+ ] $decim_slice4
-+
-+
-+  connect_bd_net -net decim_slice3_Dout [get_bd_pins decim_slice3/Dout] [get_bd_pins cpack/fifo_wr_data_0]
-+  connect_bd_net -net decim_slice4_Dout [get_bd_pins decim_slice4/Dout] [get_bd_pins cpack/fifo_wr_data_1]
-+  
-+  connect_bd_net -net rx_fir_decimator_data_out_0 [get_bd_pins decim_slice3/Din] [get_bd_pins rx_fir_decimator/data_out_0]
-+  connect_bd_net -net rx_fir_decimator_data_out_1 [get_bd_pins decim_slice4/Din] [get_bd_pins rx_fir_decimator/data_out_1]
 diff --git a/projects/pluto/system_constr.xdc b/projects/pluto/system_constr.xdc
-index 3877ade6f..9edbd1f1b 100644
+index 3877ade6f..49ce56dad 100644
 --- a/projects/pluto/system_constr.xdc
 +++ b/projects/pluto/system_constr.xdc
-@@ -1,60 +1,63 @@
+@@ -1,78 +1,78 @@
  # constraints
  # ad9361 (SWAP == 0x1)
  
@@ -236,9 +158,6 @@ index 3877ade6f..9edbd1f1b 100644
 +set_property  -dict {PACKAGE_PIN U15  IOSTANDARD LVCMOS18} [get_ports enable]
 +set_property  -dict {PACKAGE_PIN U14  IOSTANDARD LVCMOS18} [get_ports txnrx]
 +
-+set_property  -dict {PACKAGE_PIN U17  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports pl_gpio4]
-+set_property  -dict {PACKAGE_PIN Y17  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports pl_gpio3]
-+
 +set_property  -dict {PACKAGE_PIN A20  IOSTANDARD LVCMOS18  PULLTYPE PULLUP} [get_ports spi_csn]
 +set_property  -dict {PACKAGE_PIN B19  IOSTANDARD LVCMOS18} [get_ports spi_clk]
 +set_property  -dict {PACKAGE_PIN B20  IOSTANDARD LVCMOS18} [get_ports spi_mosi]
@@ -246,25 +165,36 @@ index 3877ade6f..9edbd1f1b 100644
  
  # PL GPIOs
  #
-@@ -66,13 +69,11 @@ set_property  -dict {PACKAGE_PIN  F12  IOSTANDARD LVCMOS18} [get_ports spi_miso]
- # L7N  | N14         | PL_GPIO3 | IIC SDA  | IIC SDA |
- # L9N  | M14         | PL_GPIO4 | IIC SCL  | IIC SCL |
+ # Pin  | Package Pin | GPIO     | Pluto    | Phaser  |
+ # -----|-------------|----------|----------|---------|
+-# L10P | K13         | PL_GPIO0 | SPI MOSI | TXDATA  |
+-# L12N | M12         | PL_GPIO1 | SPI MISO | BURST   |
+-# L24N | R10         | PL_GPIO2 | SPI CLKO | MUXOUT  |
+-# L7N  | N14         | PL_GPIO3 | IIC SDA  | IIC SDA |
+-# L9N  | M14         | PL_GPIO4 | IIC SCL  | IIC SCL |
++# L10P | V15         | PL_GPIO0 | SPI MOSI | TXDATA  |
++# L12N | U19         | PL_GPIO1 | SPI MISO | BURST   |
++# L24N | P16         | PL_GPIO2 | SPI CLKO | MUXOUT  |
++# L7N  | Y17         | PL_GPIO3 | IIC SDA  | IIC SDA |
++# L9N  | U17         | PL_GPIO4 | IIC SCL  | IIC SCL |
  
 -set_property  -dict {PACKAGE_PIN  K13  IOSTANDARD LVCMOS18} [get_ports pl_gpio0]
 -set_property  -dict {PACKAGE_PIN  M12  IOSTANDARD LVCMOS18} [get_ports pl_gpio1]
 -set_property  -dict {PACKAGE_PIN  R10  IOSTANDARD LVCMOS18} [get_ports pl_gpio2]
 -set_property  -dict {PACKAGE_PIN  N14  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports pl_gpio3]
 -set_property  -dict {PACKAGE_PIN  M14  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports pl_gpio4]
-+set_property  -dict {PACKAGE_PIN P16  IOSTANDARD LVCMOS18} [get_ports pl_gpio2]
-+set_property  -dict {PACKAGE_PIN U19  IOSTANDARD LVCMOS18} [get_ports pl_gpio1]
-+set_property  -dict {PACKAGE_PIN V15  IOSTANDARD LVCMOS18} [get_ports pl_gpio0]
++set_property  -dict {PACKAGE_PIN  V15  IOSTANDARD LVCMOS18} [get_ports pl_gpio0]
++set_property  -dict {PACKAGE_PIN  U19  IOSTANDARD LVCMOS18} [get_ports pl_gpio1]
++set_property  -dict {PACKAGE_PIN  P16  IOSTANDARD LVCMOS18} [get_ports pl_gpio2]
++set_property  -dict {PACKAGE_PIN  Y17  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports pl_gpio3]
++set_property  -dict {PACKAGE_PIN  U17  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports pl_gpio4]
  
 -set_property  -dict {PACKAGE_PIN  P8   IOSTANDARD LVCMOS18} [get_ports clk_out]
-+set_property  -dict {PACKAGE_PIN N17   IOSTANDARD LVCMOS18} [get_ports clk_out]
++set_property  -dict {PACKAGE_PIN  N17   IOSTANDARD LVCMOS18} [get_ports clk_out]
  
  create_clock -name rx_clk -period  16.27 [get_ports rx_clk_in]
  
-@@ -89,123 +90,123 @@ set_input_jitter clk_fpga_1 0.15
+@@ -89,123 +89,123 @@ set_input_jitter clk_fpga_1 0.15
  set_property IOSTANDARD LVCMOS18 [get_ports *fixed_io_mio*]
  set_property SLEW SLOW [get_ports *fixed_io_mio*]
  set_property DRIVE 8 [get_ports *fixed_io_mio*]
@@ -466,13 +396,8 @@ index 3877ade6f..9edbd1f1b 100644
  set_property IOSTANDARD DIFF_SSTL15_T_DCI [get_ports *ddr_dqs*]
  set_property SLEW FAST [get_ports *ddr_dqs*]
  set_property PACKAGE_PIN C2 [get_ports ddr_dqs_p[0]]
-@@ -215,4 +216,3 @@ set_property PACKAGE_PIN F2 [get_ports ddr_dqs_n[1]]
- 
- set_false_path -from [get_pins {i_system_wrapper/system_i/axi_ad9361/inst/i_rx/i_up_adc_common/up_adc_gpio_out_int_reg[0]/C}]
- set_false_path -from [get_pins {i_system_wrapper/system_i/axi_ad9361/inst/i_tx/i_up_dac_common/up_dac_gpio_out_int_reg[0]/C}]
--
 diff --git a/projects/pluto/system_project.tcl b/projects/pluto/system_project.tcl
-index cdfaccf93..fb5a8f0b2 100644
+index cdfaccf93..ddb6672bc 100644
 --- a/projects/pluto/system_project.tcl
 +++ b/projects/pluto/system_project.tcl
 @@ -2,7 +2,7 @@ source ../../scripts/adi_env.tcl
@@ -484,8 +409,3 @@ index cdfaccf93..fb5a8f0b2 100644
  
  adi_project_files pluto [list \
    "system_top.v" \
-@@ -12,4 +12,3 @@ adi_project_files pluto [list \
- set_property is_enabled false [get_files  *system_sys_ps7_0.xdc]
- adi_project_run pluto
- source $ad_hdl_dir/library/axi_ad9361/axi_ad9361_delay.tcl
--

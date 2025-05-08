@@ -1,193 +1,24 @@
-diff --git a/board/pluto/S23udc b/board/pluto/S23udc
-index 202347f0..b599f699 100644
---- a/board/pluto/S23udc
-+++ b/board/pluto/S23udc
-@@ -6,7 +6,7 @@ CONFIGFS=/sys/kernel/config/usb_gadget
- GADGET=$CONFIGFS/composite_gadget
- IIOD_OPTS="-D -n $ENDPOINTS -F /dev/iio_ffs"
- UDC_HANDLE_SUSPEND=`fw_printenv -n udc_handle_suspend 2> /dev/null || echo 0`
--USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo rndis`
-+USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo 0`
- 
- if [ "$USB_ETH_MODE" == "ncm" ]
- then
-@@ -101,14 +101,7 @@ case "$1" in
- 	mkdir -p $GADGET/configs/c.1
- 	mkdir -p $GADGET/configs/c.1/strings/0x409
- 	echo "RNDIS/MSD/ACM/IIOUSBD" > $GADGET/configs/c.1/strings/0x409/configuration
--
--	# In case the M2k is powered via the Power USB, advertise low power on the DATA USB
--	if [ "$TARGET" == "m2k" ]; then
--		echo 905 > /sys/class/gpio/export
--		[ "`cat /sys/class/gpio/gpio905/value`" == "1" ] && echo 4 > $GADGET/configs/c.1/MaxPower || echo 500 > $GADGET/configs/c.1/MaxPower
--	else
--		echo 500 > $GADGET/configs/c.1/MaxPower
--	fi
-+	echo 500 > $GADGET/configs/c.1/MaxPower
- 
- 	ln -s $GADGET/functions/$USB_NET_FUNCTION $GADGET/configs/c.1
- 	ln -s $GADGET/functions/mass_storage.0 $GADGET/configs/c.1
-diff --git a/board/pluto/S40network b/board/pluto/S40network
-index 067bbdc0..040e7dda 100644
---- a/board/pluto/S40network
-+++ b/board/pluto/S40network
-@@ -20,8 +20,13 @@ create_system_files () {
- 	IPADDR_HOST=`fw_printenv -n ipaddr_host 2> /dev/null || echo 192.168.2.10`
- 	NETMASK=`fw_printenv -n netmask 2> /dev/null || echo 255.255.255.0`
- 
--	ETH_IPADDR=`fw_printenv -n ipaddr_eth 2> /dev/null`
-+	ETH1_IPADDR=`fw_printenv -n ipaddr_eth1 2> /dev/null || echo 192.168.3.8`
-+	ETH1_NETMASK=`fw_printenv -n net1mask_eth 2> /dev/null || echo 255.255.255.1`
-+
-+
-+	ETH_IPADDR=`fw_printenv -n ipaddr_eth 2> /dev/nulli || echo 192.168.1.10`
- 	ETH_NETMASK=`fw_printenv -n netmask_eth 2> /dev/null || echo 255.255.255.0`
-+	ETH_GATEWAY=`fw_printenv -n eth_gateway 2> /dev/null || echo 192.168.1.1`
- 
- 	WLAN_SSID=`fw_printenv -n ssid_wlan 2> /dev/null`
- 	WLAN_PWD=`fw_printenv -n pwd_wlan 2> /dev/null`
-@@ -29,11 +34,10 @@ create_system_files () {
- 
- 	XO_CORRECTION=`fw_printenv -n xo_correction 2> /dev/null`
- 	UDC_HANDLE_SUSPEND=`fw_printenv -n udc_handle_suspend 2> /dev/null || echo 0`
--	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo rndis`
-+	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo 0`
- 
- 	### /etc/udhcpd.conf ###
- 	echo "start $IPADDR_HOST" > $UDHCPD_CONF
--	echo "end $IPADDR_HOST" >> $UDHCPD_CONF
- 	echo "interface usb0" >> $UDHCPD_CONF
- 	echo "option subnet $NETMASK" >> $UDHCPD_CONF
- 
-@@ -41,17 +45,26 @@ create_system_files () {
- 	echo -e "auto lo\n""iface lo inet loopback\n" > $IFAC
- 	echo -e "auto usb0\n""iface usb0 inet static" >> $IFAC
- 	echo -e "\taddress $IPADDR\n""\tnetmask $NETMASK\n" >> $IFAC
--	echo -e "auto usb1\n""iface usb1 inet dhcp\n" >> $IFAC
- 
- 	echo -e "auto eth0" >> $IFAC
- 	if [ -n "$ETH_IPADDR" ]
- 	then
- 		echo -e "iface eth0 inet static" >> $IFAC
--		echo -e "\taddress $ETH_IPADDR\n""\tnetmask $ETH_NETMASK\n" >> $IFAC
-+		echo -e "\taddress $ETH_IPADDR\n""\tnetmask $ETH_NETMASK" >> $IFAC
-+		echo -e "\tgateway $ETH_GATEWAY\n" >> $IFAC
- 	else
- 		echo -e "iface eth0 inet dhcp\n" >> $IFAC
- 	fi
- 
-+	# echo -e "auto eth0:0" >> $IFAC
-+	# if [ -n "$ETH1_IPADDR" ]
-+	# then
-+	# 	echo -e "iface eth0:0 inet static" >> $IFAC
-+	# 	echo -e "\taddress  $ETH1_IPADDR\n""\tnetmask $ETH1_NETMASK" >> $IFAC
-+	# else
-+	# 	echo -e "iface eth0:0 inet dhcp\n" >> $IFAC
-+	# fi
-+
- 	### /etc/wpa.conf ###
- 	if [ -n "$WLAN_SSID" ]
- 	then
-diff --git a/board/pluto/S41network b/board/pluto/S41network
-index 78433a60..75215996 100644
---- a/board/pluto/S41network
-+++ b/board/pluto/S41network
-@@ -5,15 +5,15 @@ source /etc/device_config
- 
- case "$1" in
- 	start)
--		echo -n "Starting dhcpd Daemon & httpd Server: "
-+		echo -n "Starting dhcpd Daemon: "
- 		start-stop-daemon -S -q -p /var/run/udhcpd.pid -x /usr/sbin/udhcpd -- $UDHCPD_CONF
--		httpd -h /www
-+		# httpd -h /www
- 		[ $? = 0 ] && echo "OK" || echo "FAIL"
- 		;;
- 
- 	stop)
--		echo -n "Stopping dhcpd Daemon & httpd Server: "
--		killall -7 httpd
-+		echo -n "Stopping dhcpd Daemon: "
-+		# killall -7 httpd
- 		start-stop-daemon -K -q -p /var/run/udhcpd.pid 2>/dev/null
- 		[ $? = 0 ] && echo "OK" || echo "FAIL"
- 		;;
-diff --git a/board/pluto/S45msd b/board/pluto/S45msd
-index 8b73beeb..c125f143 100644
---- a/board/pluto/S45msd
-+++ b/board/pluto/S45msd
-@@ -13,12 +13,12 @@ patch_html_page() {
- 	SERIAL=`cat /sys/kernel/config/usb_gadget/composite_gadget/strings/0x409/serialnumber`
- 	MACHOST=`cat /sys/kernel/config/usb_gadget/composite_gadget/functions/*/host_addr`
- 	MAC=`cat /sys/kernel/config/usb_gadget/composite_gadget/functions/*/dev_addr`
--	IIO=`iio_info -V 2>/dev/null | tail -1`
-+	IIO=`iio_info 2>/dev/null | grep "Library version:"`
- 	BUILD=`grep device-fw /opt/VERSIONS | cut -d ' ' -f 2`
- 	FPGA=`grep hdl /opt/VERSIONS | cut -d ' ' -f 2`
- 	ROOTFS=`grep buildroot /opt/VERSIONS | cut -d ' ' -f 2`
- 	UBOOT=`cat /proc/cmdline | tr  "=" "\n" | grep "U-Boot"`
--	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo rndis`
-+	USB_ETH_MODE=`fw_printenv -n usb_ethernet_mode 2> /dev/null || echo 0`
- 	if [ "$USB_ETH_MODE" == "ncm" ]; then
- 		NETWORKUSB="Communications Device Class – Network Control Model (CDC-NCM)"
- 	elif [ "$USB_ETH_MODE" == "ecm" ]; then
 diff --git a/board/pluto/busybox-1.25.0.config b/board/pluto/busybox-1.25.0.config
-index 88728cc9..65bf5222 100644
+index 88728cc9f2..78815511b9 100644
 --- a/board/pluto/busybox-1.25.0.config
 +++ b/board/pluto/busybox-1.25.0.config
-@@ -669,8 +669,8 @@ CONFIG_SWAPON=y
- # CONFIG_FEATURE_SWAPON_PRI is not set
- CONFIG_SWAPOFF=y
- CONFIG_SWITCH_ROOT=y
--# CONFIG_TASKSET is not set
--# CONFIG_FEATURE_TASKSET_FANCY is not set
-+CONFIG_TASKSET=y
-+CONFIG_FEATURE_TASKSET_FANCY=y
- CONFIG_UEVENT=y
- CONFIG_UMOUNT=y
- CONFIG_FEATURE_UMOUNT_ALL=y
-@@ -923,7 +923,7 @@ CONFIG_TRACEROUTE=y
- # CONFIG_TRACEROUTE6 is not set
- # CONFIG_FEATURE_TRACEROUTE_VERBOSE is not set
- # CONFIG_FEATURE_TRACEROUTE_USE_ICMP is not set
--# CONFIG_TUNCTL is not set
-+CONFIG_TUNCTL=y
- # CONFIG_FEATURE_TUNCTL_UG is not set
- CONFIG_VCONFIG=y
- CONFIG_WGET=y
-@@ -1008,10 +1008,10 @@ CONFIG_TOP=y
- CONFIG_FEATURE_TOP_INTERACTIVE=y
- CONFIG_FEATURE_TOP_CPU_USAGE_PERCENTAGE=y
- CONFIG_FEATURE_TOP_CPU_GLOBAL_PERCENTS=y
--# CONFIG_FEATURE_TOP_SMP_CPU is not set
--# CONFIG_FEATURE_TOP_DECIMALS is not set
--# CONFIG_FEATURE_TOP_SMP_PROCESS is not set
--# CONFIG_FEATURE_TOPMEM is not set
-+CONFIG_FEATURE_TOP_SMP_CPU=y
-+CONFIG_FEATURE_TOP_DECIMALS=y
-+CONFIG_FEATURE_TOP_SMP_PROCESS=y
-+CONFIG_FEATURE_TOPMEM=y
- CONFIG_UPTIME=y
- # CONFIG_FEATURE_UPTIME_UTMP_SUPPORT is not set
- CONFIG_WATCH=y
-diff --git a/board/pluto/device_persistent_keys b/board/pluto/device_persistent_keys
-index a67d3a8d..bd3a7f7d 100644
---- a/board/pluto/device_persistent_keys
-+++ b/board/pluto/device_persistent_keys
-@@ -8,9 +8,9 @@ cat /proc/mounts | grep -q mtd2 || (echo "Filesystem not mounted use device_form
- 
- #dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
- [[ ! -f ${KEYFILE} ]] && dropbearkey -t ecdsa -f ${KEYFILE}
--install -D /etc/dropbear/dropbear_* -t /mnt/jffs2/etc/dropbear
-+install -D ${KEYFILE} -t /mnt/jffs2/etc/dropbear
- cd /etc/dropbear
--md5sum dropbear_* /etc/dropbear/ 2>/dev/null > /mnt/jffs2/etc/dropbear/keys.md5
-+md5sum dropbear* /etc/dropbear/ 2>/dev/null > /mnt/jffs2/etc/dropbear/keys.md5
- 
- if [ -f ${IDFILE} ]; then
-  install -D ${IDFILE} -t /mnt/jffs2/root/.ssh
+@@ -880,10 +880,10 @@ CONFIG_FEATURE_IP_NEIGH=y
+ CONFIG_NAMEIF=y
+ # CONFIG_FEATURE_NAMEIF_EXTENDED is not set
+ # CONFIG_NBDCLIENT is not set
+-# CONFIG_NC is not set
+-# CONFIG_NC_SERVER is not set
+-# CONFIG_NC_EXTRA is not set
+-# CONFIG_NC_110_COMPAT is not set
++CONFIG_NC=y
++CONFIG_NC_SERVER=y
++CONFIG_NC_EXTRA=y
++CONFIG_NC_110_COMPAT=y
+ CONFIG_NETSTAT=y
+ # CONFIG_FEATURE_NETSTAT_WIDE is not set
+ # CONFIG_FEATURE_NETSTAT_PRG is not set
 diff --git a/board/pluto/motd b/board/pluto/motd
-index a3b3f6f6..55601033 100644
+index a3b3f6f664..55601033c6 100644
 --- a/board/pluto/motd
 +++ b/board/pluto/motd
 @@ -1,10 +1,9 @@
@@ -208,51 +39,38 @@ index a3b3f6f6..55601033 100644
 -https://wiki.analog.com/university/tools/pluto
 +https://github.com/plutoplus/plutoplus
 diff --git a/configs/zynq_pluto_defconfig b/configs/zynq_pluto_defconfig
-index 6203766e..7d6a4c43 100644
+index 6203766e04..6c4cf1266b 100644
 --- a/configs/zynq_pluto_defconfig
 +++ b/configs/zynq_pluto_defconfig
-@@ -5,7 +5,11 @@ BR2_ARM_ENABLE_VFP=y
- BR2_ARM_FPU_NEON=y
- BR2_TOOLCHAIN_EXTERNAL=y
- BR2_TOOLCHAIN_EXTERNAL_LINARO_ARM=y
--BR2_OPTIMIZE_2=y
-+BR2_OPTIMIZE_3=y
-+BR2_PACKAGE_ETHTOOL=n
-+BR2_PACKAGE_ETHTOOL_PRETTY_PRINT=n
-+BR2_PACKAGE_IPERF3=y
-+BR2_PACKAGE_HTOP=y
- BR2_TARGET_GENERIC_HOSTNAME="pluto"
- BR2_TARGET_GENERIC_ISSUE="Welcome to Pluto"
- BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_MDEV=y
-@@ -29,6 +33,7 @@ BR2_PACKAGE_MTD=y
+@@ -29,6 +29,7 @@ BR2_PACKAGE_MTD=y
  # BR2_PACKAGE_MTD_UBIRSVOL is not set
  # BR2_PACKAGE_MTD_UBIUPDATEVOL is not set
  # BR2_PACKAGE_MTD_UBIBLOCK is not set
-+BR2_PACKAGE_NFS_UTILS=n
++BR2_PACKAGE_NFS_UTILS=y
  BR2_PACKAGE_LINUX_FIRMWARE=y
  BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT61=y
  BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT73=y
-@@ -36,24 +41,40 @@ BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT2XX=y
+@@ -36,24 +37,39 @@ BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT2XX=y
  BR2_PACKAGE_LINUX_FIRMWARE_RTL_81XX=y
  BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX=y
  BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX=y
-+BR2_PACKAGE_GPSD=n
-+BR2_PACKAGE_GPSD_NTP_SHM=n
-+BR2_PACKAGE_GPSD_UBX=n
++BR2_PACKAGE_GPSD=y
++BR2_PACKAGE_GPSD_NTP_SHM=y
++BR2_PACKAGE_GPSD_UBX=y
  BR2_PACKAGE_INPUT_EVENT_DAEMON=y
  BR2_PACKAGE_UBOOT_TOOLS=y
- BR2_PACKAGE_ZLIB=y
-+BR2_PACKAGE_PHP=n
-+BR2_PACKAGE_PHP_EXT_SOCKETS=n
+-BR2_PACKAGE_ZLIB=y
++BR2_PACKAGE_PHP=y
++BR2_PACKAGE_PHP_EXT_SOCKETS=y
  BR2_PACKAGE_LIBAD9361_IIO=y
  BR2_PACKAGE_LIBGPIOD=y
  BR2_PACKAGE_LIBGPIOD_TOOLS=y
  BR2_PACKAGE_LIBIIO_IIOD_USBD=y
  BR2_PACKAGE_LIBIIO_TESTS=y
-+BR2_PACKAGE_LIBV4L=n
-+BR2_PACKAGE_LIBV4L_UTILS=n
++BR2_PACKAGE_LIBV4L=y
++BR2_PACKAGE_LIBV4L_UTILS=y
  BR2_PACKAGE_LIBINI=y
-+BR2_PACKAGE_X264=n
++BR2_PACKAGE_X264=y
 +BR2_PACKAGE_FFTW_SINGLE=y
 +BR2_PACKAGE_FFTW_FAST=y
 +BR2_PACKAGE_BC=y
@@ -262,124 +80,55 @@ index 6203766e..7d6a4c43 100644
  BR2_PACKAGE_DROPBEAR=y
 -BR2_PACKAGE_DROPBEAR_LOCALOPTIONS_FILE="board/pluto/dropbrear_localoptions.h"
 +BR2_PACKAGE_DROPBEAR_MOTD=y
-+BR2_PACKAGE_HOSTAPD=n
++BR2_PACKAGE_HOSTAPD=y
  BR2_PACKAGE_IW=y
-+BR2_PACKAGE_MOSQUITTO=n
-+BR2_PACKAGE_NTP=n
++BR2_PACKAGE_MOSQUITTO=y
++BR2_PACKAGE_NTP=y
  BR2_PACKAGE_WPA_SUPPLICANT=y
  BR2_PACKAGE_WPA_SUPPLICANT_CLI=y
  BR2_PACKAGE_WPA_SUPPLICANT_PASSPHRASE=y
-+BR2_PACKAGE_OPKG=n
++BR2_PACKAGE_OPKG=y
 +BR2_PACKAGE_NANO=y
  BR2_PACKAGE_POLL_SYSFS=y
  BR2_PACKAGE_AD936X_REF_CAL=y
  BR2_TARGET_ROOTFS_CPIO=y
-@@ -62,3 +83,29 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
+@@ -62,3 +78,15 @@ BR2_TARGET_ROOTFS_CPIO_UIMAGE=y
  BR2_PACKAGE_HOST_DOSFSTOOLS=y
  BR2_PACKAGE_HOST_GENIMAGE=y
  BR2_PACKAGE_HOST_MTOOLS=y
-+BR2_PACKAGE_FFMPEG_43=n
-+BR2_PACKAGE_ALSA_UTILS=n
-+BR2_PACKAGE_ALSA_UTILS_APLAY=n
-+BR2_PACKAGE_FFMPEG=n
-+BR2_PACKAGE_FFMPEG_GPL=n
-+BR2_PACKAGE_FFMPEG_SWSCALE=n
++BR2_PACKAGE_FFMPEG_43=y
++BR2_PACKAGE_ALSA_UTILS=y
++BR2_PACKAGE_ALSA_UTILS_APLAY=y
++BR2_PACKAGE_FFMPEG=y
++BR2_PACKAGE_FFMPEG_GPL=y
++BR2_PACKAGE_FFMPEG_SWSCALE=y
 +BR2_PACKAGE_FFMPEG_ENCODERS="aac mpeg2video rawvideo libx264 dvbsub bmp png"
 +BR2_PACKAGE_FFMPEG_DECODERS="aac aac_latm mpeg2video mp2 yuv4 rawvideo mjpeg h264 mp3 pcm_s16le hevc flv srt"
 +BR2_PACKAGE_FFMPEG_MUXERS="adts flv mpegts rawvideo image2"
 +BR2_PACKAGE_FFMPEG_DEMUXERS="aac h264 mpegts mpegvideo pcm_s16le rawvideo rtp hevc flv dvbsub"
 +BR2_PACKAGE_FFMPEG_PARSERS="aac h264 mjpeg mpegaudio mpegvideo hevc"
-+BR2_PACKAGE_STRACE=n
-+BR2_CCACHE=y
-+BR2_PACKAGE_BATCTL=y
-+BR2_PACKAGE_BRIDGE_UTILS=y
-+BR2_PACKAGE_WIREGUARD_TOOLS=y
-+BR2_PACKAGE_TCPDUMP=n
-+BR2_PACKAGE_IPERF3=y
-+BR2_PACKAGE_IPROUTE2=y
-+BR2_PACKAGE_LIQUID_DSP=y
-+BR2_PACKAGE_TUNCTL=y
-+BR2_ENABLE_DEBUG=n
-+BR2_PACKAGE_VALGRIND=n
-+BR2_PACKAGE_VALGRIND_CALLGRIND=n
-+BR2_PACKAGE_LINUX_TOOLS_PERF=n
-+
-diff --git a/package/libfec/Config.in b/package/libfec/Config.in
-new file mode 100644
-index 00000000..8afd24a8
---- /dev/null
-+++ b/package/libfec/Config.in
-@@ -0,0 +1,5 @@
-+config BR2_PACKAGE_libfec
-+	bool "libfec"
-+	select BR2_PACKAGE_libfec
-+	help
-+	  libfec
-diff --git a/package/libfec/libfec.hash b/package/libfec/libfec.hash
-new file mode 100644
-index 00000000..819ea388
---- /dev/null
-+++ b/package/libfec/libfec.hash
-@@ -0,0 +1 @@
-+sha256	17484620f37614bd61e64189ed3a9908031ad0c18ba250756e8da8130c9cf068  libfec-0.2.tar.gz
-diff --git a/package/libfec/libfec.mk b/package/libfec/libfec.mk
-new file mode 100644
-index 00000000..a4300379
---- /dev/null
-+++ b/package/libfec/libfec.mk
-@@ -0,0 +1,24 @@
-+################################################################################
-+#
-+# libfec
-+#
-+################################################################################
-+LIBFEC_VERSION = 0.2
-+LIBFEC_SITE = $(call github,tvelliott,libfec,master)
-+
-+LIBFEC_INSTALL_STAGING = YES
-+
-+define LIBFEC_BUILD_CMDS
-+	$(TARGET_MAKE_ENV) CROSS_COMPILE=arm-linux-gnueabihf- $(MAKE1) -C $(@D)
-+endef
-+
-+define LIBFEC_INSTALL_TARGET_CMDS
-+	(cd $(@D); \
-+    cp *.so $(TARGET_DIR)/usr/lib/ ; \
-+    cp *.a $(TARGET_DIR)/usr/lib/ ; \
-+    cp fec.h $(STAGING_DIR)/usr/include/ ; \
-+    cp *.so $(STAGING_DIR)/usr/lib/ ; \
-+    )
-+endef
-+
-+$(eval $(generic-package))
-diff --git a/package/liquid-dsp/liquid-dsp.mk b/package/liquid-dsp/liquid-dsp.mk
-index fcdf5725..fbe3594a 100644
---- a/package/liquid-dsp/liquid-dsp.mk
-+++ b/package/liquid-dsp/liquid-dsp.mk
-@@ -25,20 +25,22 @@ LIQUID_DSP_CFLAGS = $(TARGET_CFLAGS)
- LIQUID_DSP_LDFLAGS = $(TARGET_LDFLAGS)
++#BR2_PACKAGE_STRACE=y
+diff --git a/package/ad936x_ref_cal/ad936x_ref_cal.hash b/package/ad936x_ref_cal/ad936x_ref_cal.hash
+index 24eb7fb88b..63a7bcbc27 100644
+--- a/package/ad936x_ref_cal/ad936x_ref_cal.hash
++++ b/package/ad936x_ref_cal/ad936x_ref_cal.hash
+@@ -1,5 +1,5 @@
+ # Locally computed
+-sha256 26aedd8021fa939ab2f53e55904d869207265242fef7ad86aa4673e219b7cbef ad936x_ref_cal-01747db5cd60ff64115a73ac1f3bb97911f5c58e-br1.tar.gz
++sha256 08d144bf3e5c729ec00bd016d1eb529fd7c8f2e46a1740f12cc3afc3989c1419 ad936x_ref_cal-origin_master-br1.tar.gz
  
- # Speed over accuracy trade off
--ifeq ($(BR2_PACKAGE_LIQUID_DSP_FAST),y)
-+#ifeq ($(BR2_PACKAGE_LIQUID_DSP_FAST),y)
-+$(warning BR2_PACKAGE_LIQUID_DSP_FAST)
- LIQUID_DSP_CFLAGS += -ffast-math
--endif
-+#endif
+ # License files (locally computed as well)
+ sha256 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643 LICENSE
+diff --git a/package/ad936x_ref_cal/ad936x_ref_cal.mk b/package/ad936x_ref_cal/ad936x_ref_cal.mk
+index 32e38fafaf..72593ccb10 100644
+--- a/package/ad936x_ref_cal/ad936x_ref_cal.mk
++++ b/package/ad936x_ref_cal/ad936x_ref_cal.mk
+@@ -5,7 +5,7 @@
+ ################################################################################
  
- # use FFTW instead of built-in FFT
- ifeq ($(BR2_PACKAGE_FFTW_SINGLE),y)
-+$(warning BR2_PACKAGE_FFTW_SINGLE)
- LIQUID_DSP_LDFLAGS += -lfftw3f
- LIQUID_DSP_DEPENDENCIES += fftw-single
- endif
  
- # disable altivec, it has build issues
--ifeq ($(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpc64le),y)
-+#ifeq ($(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpc64le),y)
- LIQUID_DSP_CONF_OPTS += --enable-simdoverride
--endif
-+#endif
- 
- LIQUID_DSP_CONF_OPTS += \
- 	CFLAGS="$(LIQUID_DSP_CFLAGS)" \
+-AD936X_REF_CAL_VERSION = 01747db5cd60ff64115a73ac1f3bb97911f5c58e
++AD936X_REF_CAL_VERSION = origin/master  
+ AD936X_REF_CAL_SITE = https://github.com/analogdevicesinc/plutosdr_scripts.git
+ AD936X_REF_CAL_SITE_METHOD = git
+ AD936X_REF_CAL_LICENSE = GPLv2

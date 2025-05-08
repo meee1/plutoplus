@@ -1,5 +1,5 @@
 diff --git a/arch/arm/dts/zynq-pluto-sdr.dts b/arch/arm/dts/zynq-pluto-sdr.dts
-index c618d98b..40a8cef0 100644
+index c618d98b54..c318383554 100644
 --- a/arch/arm/dts/zynq-pluto-sdr.dts
 +++ b/arch/arm/dts/zynq-pluto-sdr.dts
 @@ -16,6 +16,7 @@
@@ -19,8 +19,9 @@ index c618d98b..40a8cef0 100644
 +	u-boot,dm-pre-reloc;
 +	status = "okay";
 +};
+\ No newline at end of file
 diff --git a/configs/zynq_pluto_defconfig b/configs/zynq_pluto_defconfig
-index 0daf4622..5991fa6c 100644
+index 0daf46221e..5991fa6cf7 100644
 --- a/configs/zynq_pluto_defconfig
 +++ b/configs/zynq_pluto_defconfig
 @@ -7,13 +7,14 @@ CONFIG_SPL=y
@@ -51,3 +52,25 @@ index 0daf4622..5991fa6c 100644
 +CONFIG_NAND_ARASAN=y
 +CONFIG_DM_ETH=y
 +CONFIG_ZYNQ_GEM=y
+diff --git a/include/configs/zynq-common.h b/include/configs/zynq-common.h
+index fd50caf450..9765ca4a08 100644
+--- a/include/configs/zynq-common.h
++++ b/include/configs/zynq-common.h
+@@ -257,7 +257,7 @@
+ 	"fdt_high=0x20000000\0"	\
+ 	"initrd_high=0x20000000\0"	\
+ 	"bootenv=uEnv.txt\0" \
+-	"maxcpus=1\0" \
++	"maxcpus=2\0" \
+ 	"clear_reset_cause=mw f8000008 df0d && mw f8000258 00400000 && mw f8000004 767b\0" \
+ 	"loadbootenv=load mmc 0 ${loadbootenv_addr} ${bootenv}\0" \
+ 	"importbootenv=echo Importing environment from SD ...; " \
+@@ -269,7 +269,7 @@
+ 			"fi; " \
+ 		"fi; \0" \
+ 	"refclk_source=internal\0" \
+-	"mode=1r1t\0" \
++	"mode=2r2t\0" \
+ 	"adi_loadvals_pluto=if test -n \"${ad936x_ext_refclk}\" && test ! -n \"${ad936x_skip_ext_refclk}\"; then " \
+ 			"fdt set /clocks/clock@0 clock-frequency ${ad936x_ext_refclk}; " \
+ 		"fi; " \

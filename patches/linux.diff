@@ -1,5 +1,5 @@
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts b/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
-index fe5569225fd36..1483505ae12fd 100644
+index fe5569225fd3..846d2ff2b282 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
 @@ -98,6 +98,11 @@ &cf_ad9364_dac_core_0 {
@@ -14,7 +14,7 @@ index fe5569225fd36..1483505ae12fd 100644
  	leds {
  		compatible = "gpio-leds";
  		led0 {
-@@ -140,3 +145,18 @@ channel@1 {
+@@ -140,3 +145,17 @@ channel@1 {
  		};
  	};
  };
@@ -29,42 +29,32 @@ index fe5569225fd36..1483505ae12fd 100644
 +&usb0 {
 +	status = "okay";
 +	dr_mode = "otg";
-+	usb-phy = <&usb_phy0>;
-+    pinctrl-names = "default";
-+    pinctrl-0 = <&pinctrl_usb0_default>;
++  pinctrl-names = "default";
++  pinctrl-0 = <&pinctrl_usb0_default>;
 +};
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-index 08c5a42204f3b..5e1267f8f75d5 100644
+index 08c5a42204f3..1d83aa72ad9e 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-@@ -30,10 +30,26 @@ ad9364_clkin: clock@0 {
- 		};
- 	};
+@@ -32,8 +32,16 @@ ad9364_clkin: clock@0 {
  
-+	usb_phy0: phy0 {
-+		compatible = "ulpi-phy";
-+		#phy-cells = <0>;
-+		reg = <0xe0002000 0x1000>;
-+		view-port = <0x0170>;
-+		drv-vbus;
-+	};
-+
-+};
-+
+ };
+ 
 +&uart1 {
 +	u-boot,dm-pre-reloc;
 +	status = "okay";
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pinctrl_uart1_default>;
- };
- 
++};
++
  &sdhci0 {
- 	status = "disabled";
+-	status = "disabled";
++	status = "okay";
 +    disable-wp;
  };
  
  &watchdog0 {
-@@ -42,9 +58,24 @@ &watchdog0 {
+@@ -42,11 +50,28 @@ &watchdog0 {
  };
  
  &usb0 {
@@ -72,7 +62,8 @@ index 08c5a42204f3b..5e1267f8f75d5 100644
 +	xlnx,phy-reset-gpio = <&gpio0 46 0>;
  	dr_mode = "otg";
  	status = "okay";
-+	usb-phy = <&usb_phy0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usb0_default>;
 +};
 +
 +&gem0 {
@@ -89,8 +80,30 @@ index 08c5a42204f3b..5e1267f8f75d5 100644
 +	};
  };
  
++
  &qspi {
-@@ -179,6 +210,148 @@ mwipcore@43c00000 {
+ 	status = "okay";
+ 	is-dual = <0>;
+@@ -90,6 +115,18 @@ channel@0 {
+ 	};
+ };
+ 
++
++&gem0 {
++	status = "disabled";
++	phy-mode = "rgmii-id";
++	phy-handle = <&ethernet_phy>;
++
++	ethernet_phy: ethernet-phy@1 {
++		reg = <1>;
++		device_type = "ethernet-phy";
++	};
++};
++
+ / {
+ 	fpga_axi: fpga-axi@0 {
+ 		compatible = "simple-bus";
+@@ -179,6 +216,148 @@ mwipcore@43c00000 {
  	};
  };
  
@@ -240,18 +253,10 @@ index 08c5a42204f3b..5e1267f8f75d5 100644
  	status = "okay";
  
 diff --git a/arch/arm/configs/zynq_pluto_defconfig b/arch/arm/configs/zynq_pluto_defconfig
-index 506eec34f4b4d..ce6e4f683d7b3 100644
+index 506eec34f4b4..818b84bddc05 100644
 --- a/arch/arm/configs/zynq_pluto_defconfig
 +++ b/arch/arm/configs/zynq_pluto_defconfig
-@@ -13,6 +13,7 @@ CONFIG_BLK_DEV_INITRD=y
- # CONFIG_RD_LZO is not set
- # CONFIG_RD_LZ4 is not set
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- CONFIG_SLAB=y
-@@ -269,3 +270,27 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
+@@ -269,3 +269,15 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
  CONFIG_DEBUG_LL=y
  CONFIG_DEBUG_ZYNQ_UART1=y
  CONFIG_EARLY_PRINTK=y
@@ -267,79 +272,3 @@ index 506eec34f4b4d..ce6e4f683d7b3 100644
 +CONFIG_MMC_SDHCI=y
 +CONFIG_MMC_SDHCI_PLTFM=y
 +CONFIG_MMC_SDHCI_OF_ARASAN=y
-+CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3=y
-+CONFIG_TUN=y
-+CONFIG_TAP=y
-+CONFIG_BRIDGE=y
-+CONFIG_BATMAN_ADV=y
-+CONFIG_WIREGUARD=y
-+
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
-+CONFIG_CPU_FREQ_GOV_USERSPACE=y
-+CONFIG_CPUFREQ_DT=y
-+CONFIG_CPUFREQ_DT_PLATDEV=y
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index 8355c38958942..81fed5c109db8 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -415,7 +415,6 @@ config CPU_V7
- 	select CPU_CP15_MPU if !MMU
- 	select CPU_HAS_ASID if MMU
- 	select CPU_PABRT_V7
--	select CPU_SPECTRE if MMU
- 	select CPU_THUMB_CAPABLE
- 	select CPU_TLB_V7 if MMU
- 
-diff --git a/drivers/iio/adc/ad9361_conv.c b/drivers/iio/adc/ad9361_conv.c
-index 1902e7d075014..8039a56cbb0f9 100644
---- a/drivers/iio/adc/ad9361_conv.c
-+++ b/drivers/iio/adc/ad9361_conv.c
-@@ -205,6 +205,24 @@ static struct iio_chan_spec_ext_info axiadc_ext_info[] = {
- 		.shift = 0,						\
- 	  },								\
- 	}
-+    
-+#define AIM_CHAN8(_chan, _si, _bits, _sign)			\
-+	{ .type = IIO_VOLTAGE,						\
-+	  .indexed = 1,							\
-+	  .channel = _chan,						\
-+	  .info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
-+			BIT(IIO_CHAN_INFO_CALIBBIAS) |			\
-+			BIT(IIO_CHAN_INFO_CALIBPHASE),			\
-+	  .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
-+	  .ext_info = axiadc_ext_info,					\
-+	  .scan_index = _si,						\
-+	  .scan_type = {						\
-+		.sign = _sign,						\
-+		.realbits = _bits,					\
-+		.storagebits = 8,					\
-+		.shift = 0,						\
-+	  },								\
-+	}
- 
- #define AIM_MC_CHAN(_chan, _si, _bits, _sign)			\
- 	{ .type = IIO_VOLTAGE,						\
-@@ -266,8 +284,8 @@ static const struct axiadc_chip_info axiadc_chip_info_tbl[] = {
- 		.max_rate = 61440000UL,
- 		.max_testmode = 0,
- 		.num_channels = 2,
--		.channel[0] = AIM_CHAN(0, 0, 12, 'S'),
--		.channel[1] = AIM_CHAN(1, 1, 12, 'S'),
-+		.channel[0] = AIM_CHAN8(0, 0, 12, 'S'),
-+		.channel[1] = AIM_CHAN8(1, 1, 12, 'S'),
- 	},
- 
- };
-diff --git a/init/Kconfig b/init/Kconfig
-index 11f8a845f259d..806c196d51276 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1365,7 +1365,6 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
- 
- config CC_OPTIMIZE_FOR_PERFORMANCE_O3
- 	bool "Optimize more for performance (-O3)"
--	depends on ARC
- 	help
- 	  Choosing this option will pass "-O3" to your compiler to optimize
- 	  the kernel yet more for performance.
