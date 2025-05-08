@@ -1,65 +1,5 @@
-diff --git a/arch/arm/boot/dts/zynq-coraz7s.dtsi b/arch/arm/boot/dts/zynq-coraz7s.dtsi
-index b079648d2b07..4fd4d82b50ab 100644
---- a/arch/arm/boot/dts/zynq-coraz7s.dtsi
-+++ b/arch/arm/boot/dts/zynq-coraz7s.dtsi
-@@ -28,6 +28,14 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	usb_phy0: phy0@e0002000 {
-+		compatible = "ulpi-phy";
-+		#phy-cells = <0>;
-+		reg = <0xe0002000 0x1000>;
-+		view-port = <0x0170>;
-+		drv-vbus;
-+	};
-+
- 	fpga_axi: fpga-axi@0 {
- 		compatible = "simple-bus";
- 		#address-cells = <0x1>;
-@@ -73,5 +81,5 @@ &uart0 {
- &usb0 {
- 	status = "okay";
- 	dr_mode = "host";
-+	usb-phy = <&usb_phy0>;
- };
--
-diff --git a/arch/arm/boot/dts/zynq-m2k.dtsi b/arch/arm/boot/dts/zynq-m2k.dtsi
-index b82bf5a25641..6a80b110a07a 100644
---- a/arch/arm/boot/dts/zynq-m2k.dtsi
-+++ b/arch/arm/boot/dts/zynq-m2k.dtsi
-@@ -19,6 +19,15 @@ memory {
- 	chosen {
- 		stdout-path = "/amba@0/uart@E0001000";
- 	};
-+
-+	usb_phy0: phy0 {
-+		compatible = "ulpi-phy";
-+		#phy-cells = <0>;
-+		reg = <0xe0002000 0x1000>;
-+		view-port = <0x0170>;
-+		drv-vbus;
-+	};
-+
- };
- 
- &cpu0 {
-@@ -46,6 +55,7 @@ &usb0 {
- 	xlnx,phy-reset-gpio = <&gpio0 52 0>;
- 	dr_mode = "otg";
- 	status = "okay";
-+	usb-phy = <&usb_phy0>;
- };
- 
- &clkc {
-@@ -94,5 +104,3 @@ channel@0 {
- 		};
- 	};
- };
--
--
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts b/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
-index fe5569225fd3..1483505ae12f 100644
+index fe5569225fd36..1483505ae12fd 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
 @@ -98,6 +98,11 @@ &cf_ad9364_dac_core_0 {
@@ -94,7 +34,7 @@ index fe5569225fd3..1483505ae12f 100644
 +    pinctrl-0 = <&pinctrl_usb0_default>;
 +};
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-index 08c5a42204f3..0fe5bba8a082 100644
+index 08c5a42204f3b..5e1267f8f75d5 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 @@ -30,10 +30,26 @@ ad9364_clkin: clock@0 {
@@ -119,8 +59,7 @@ index 08c5a42204f3..0fe5bba8a082 100644
  };
  
  &sdhci0 {
--	status = "disabled";
-+	status = "okay";
+ 	status = "disabled";
 +    disable-wp;
  };
  
@@ -151,26 +90,7 @@ index 08c5a42204f3..0fe5bba8a082 100644
  };
  
  &qspi {
-@@ -90,6 +121,18 @@ channel@0 {
- 	};
- };
- 
-+
-+&gem0 {
-+	status = "disabled";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&ethernet_phy>;
-+
-+	ethernet_phy: ethernet-phy@1 {
-+		reg = <1>;
-+		device_type = "ethernet-phy";
-+	};
-+};
-+
- / {
- 	fpga_axi: fpga-axi@0 {
- 		compatible = "simple-bus";
-@@ -179,6 +222,148 @@ mwipcore@43c00000 {
+@@ -179,6 +210,148 @@ mwipcore@43c00000 {
  	};
  };
  
@@ -319,87 +239,8 @@ index 08c5a42204f3..0fe5bba8a082 100644
  &spi0 {
  	status = "okay";
  
-diff --git a/arch/arm/boot/dts/zynq-zc702.dts b/arch/arm/boot/dts/zynq-zc702.dts
-index aa084a9938d9..cdc7b351330a 100644
---- a/arch/arm/boot/dts/zynq-zc702.dts
-+++ b/arch/arm/boot/dts/zynq-zc702.dts
-@@ -57,6 +57,14 @@ led-ds23 {
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
-+
-+	usb_phy0: phy0@e0002000 {
-+		compatible = "ulpi-phy";
-+		#phy-cells = <0>;
-+		reg = <0xe0002000 0x1000>;
-+		view-port = <0x0170>;
-+		drv-vbus;
-+};
- };
- 
- &can0 {
-@@ -441,6 +449,7 @@ &uart1 {
- &usb0 {
- 	status = "okay";
- 	dr_mode = "host";
-+    usb-phy = <&usb_phy0>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usb0_default>;
- };
-diff --git a/arch/arm/boot/dts/zynq-zc706.dts b/arch/arm/boot/dts/zynq-zc706.dts
-index 6a6e8312b3f7..ef5b93570356 100644
---- a/arch/arm/boot/dts/zynq-zc706.dts
-+++ b/arch/arm/boot/dts/zynq-zc706.dts
-@@ -27,6 +27,14 @@ chosen {
- 		bootargs = "";
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	usb_phy0: phy0@e0002000 {
-+		compatible = "ulpi-phy";
-+		#phy-cells = <0>;
-+		reg = <0xe0002000 0x1000>;
-+		view-port = <0x0170>;
-+		drv-vbus;
-+};
- };
- 
- &clkc {
-@@ -352,6 +360,7 @@ &uart1 {
- &usb0 {
- 	status = "okay";
- 	dr_mode = "host";
-+	usb-phy = <&usb_phy0>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usb0_default>;
- };
-diff --git a/arch/arm/boot/dts/zynq-zed.dts b/arch/arm/boot/dts/zynq-zed.dts
-index 60f73cd2601b..2d531a6ea2ca 100644
---- a/arch/arm/boot/dts/zynq-zed.dts
-+++ b/arch/arm/boot/dts/zynq-zed.dts
-@@ -26,6 +26,14 @@ chosen {
- 		bootargs = "";
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	usb_phy0: phy0@e0002000 {
-+		compatible = "ulpi-phy";
-+		#phy-cells = <0>;
-+		reg = <0xe0002000 0x1000>;
-+		view-port = <0x0170>;
-+		drv-vbus;
-+	};
- };
- 
- &clkc {
-@@ -93,4 +101,5 @@ &uart1 {
- &usb0 {
- 	status = "okay";
- 	dr_mode = "host";
-+	usb-phy = <&usb_phy0>;
- };
 diff --git a/arch/arm/configs/zynq_pluto_defconfig b/arch/arm/configs/zynq_pluto_defconfig
-index 506eec34f4b4..ce6e4f683d7b 100644
+index 506eec34f4b4d..ce6e4f683d7b3 100644
 --- a/arch/arm/configs/zynq_pluto_defconfig
 +++ b/arch/arm/configs/zynq_pluto_defconfig
 @@ -13,6 +13,7 @@ CONFIG_BLK_DEV_INITRD=y
@@ -439,7 +280,7 @@ index 506eec34f4b4..ce6e4f683d7b 100644
 +CONFIG_CPUFREQ_DT=y
 +CONFIG_CPUFREQ_DT_PLATDEV=y
 diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index 8355c3895894..81fed5c109db 100644
+index 8355c38958942..81fed5c109db8 100644
 --- a/arch/arm/mm/Kconfig
 +++ b/arch/arm/mm/Kconfig
 @@ -415,7 +415,6 @@ config CPU_V7
@@ -451,7 +292,7 @@ index 8355c3895894..81fed5c109db 100644
  	select CPU_TLB_V7 if MMU
  
 diff --git a/drivers/iio/adc/ad9361_conv.c b/drivers/iio/adc/ad9361_conv.c
-index 1902e7d07501..79f3b9359d40 100644
+index 1902e7d075014..8039a56cbb0f9 100644
 --- a/drivers/iio/adc/ad9361_conv.c
 +++ b/drivers/iio/adc/ad9361_conv.c
 @@ -205,6 +205,24 @@ static struct iio_chan_spec_ext_info axiadc_ext_info[] = {
@@ -479,18 +320,19 @@ index 1902e7d07501..79f3b9359d40 100644
  
  #define AIM_MC_CHAN(_chan, _si, _bits, _sign)			\
  	{ .type = IIO_VOLTAGE,						\
-@@ -266,7 +284,7 @@ static const struct axiadc_chip_info axiadc_chip_info_tbl[] = {
+@@ -266,8 +284,8 @@ static const struct axiadc_chip_info axiadc_chip_info_tbl[] = {
  		.max_rate = 61440000UL,
  		.max_testmode = 0,
  		.num_channels = 2,
 -		.channel[0] = AIM_CHAN(0, 0, 12, 'S'),
-+		.channel[0] = AIM_CHAN8(0, 0, 12, 'S'),
 -		.channel[1] = AIM_CHAN(1, 1, 12, 'S'),
++		.channel[0] = AIM_CHAN8(0, 0, 12, 'S'),
 +		.channel[1] = AIM_CHAN8(1, 1, 12, 'S'),
  	},
  
+ };
 diff --git a/init/Kconfig b/init/Kconfig
-index 11f8a845f259..806c196d5127 100644
+index 11f8a845f259d..806c196d51276 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
 @@ -1365,7 +1365,6 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
