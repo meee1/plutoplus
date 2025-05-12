@@ -1,5 +1,5 @@
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts b/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
-index fe5569225fd3..846d2ff2b282 100644
+index fe5569225fd36..846d2ff2b2827 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr-revc.dts
 @@ -98,6 +98,11 @@ &cf_ad9364_dac_core_0 {
@@ -33,7 +33,7 @@ index fe5569225fd3..846d2ff2b282 100644
 +  pinctrl-0 = <&pinctrl_usb0_default>;
 +};
 diff --git a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
-index 08c5a42204f3..1d83aa72ad9e 100644
+index 08c5a42204f3b..1d83aa72ad9e1 100644
 --- a/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 +++ b/arch/arm/boot/dts/zynq-pluto-sdr.dtsi
 @@ -32,8 +32,16 @@ ad9364_clkin: clock@0 {
@@ -253,7 +253,7 @@ index 08c5a42204f3..1d83aa72ad9e 100644
  	status = "okay";
  
 diff --git a/arch/arm/configs/zynq_pluto_defconfig b/arch/arm/configs/zynq_pluto_defconfig
-index 506eec34f4b4..818b84bddc05 100644
+index 506eec34f4b4d..818b84bddc051 100644
 --- a/arch/arm/configs/zynq_pluto_defconfig
 +++ b/arch/arm/configs/zynq_pluto_defconfig
 @@ -269,3 +269,15 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
